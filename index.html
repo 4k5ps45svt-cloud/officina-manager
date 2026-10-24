@@ -1,4 +1,4 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#12334b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Officina"><link rel="manifest" href="manifest.webmanifest"><title>Officina Manager</title><style>
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b111b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Officina"><link rel="manifest" href="manifest.webmanifest"><title>Officina Manager</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f3f6f8;color:#183044;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}header{background:#12334b;color:white;padding:22px 16px}header h1{margin:0;font-size:23px}header small{opacity:.8}.wrap{max-width:640px;margin:auto;padding:16px 14px 95px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{border:1px solid #dce6e9;background:white;border-radius:18px;min-height:120px;padding:18px 6px;font-size:17px;font-weight:700}.tile b{display:block;font-size:31px;margin-bottom:9px}button{font:inherit;cursor:pointer}.primary{background:#087d81;color:white;border:0;border-radius:12px;padding:14px 18px;width:100%;font-weight:700}.secondary{border:1px solid #c8d4d9;border-radius:10px;background:white;padding:11px}.danger{color:#a82929}.card,.item{background:white;border:1px solid #dce5e8;border-radius:14px;padding:15px;margin:11px 0}.item{display:block;text-align:left;width:100%}.item strong{display:block;margin-bottom:5px}h2{font-size:20px;margin:8px 0 15px}section{display:none}section.active{display:block}.field{margin-bottom:13px}label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid #c9d5da;border-radius:10px;padding:12px;background:white;color:#183044;font:16px -apple-system,Arial,sans-serif}textarea{min-height:70px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted{color:#637885;font-size:13px}.total{font-size:24px;color:#087d81;font-weight:800}.actions{display:flex;gap:9px;margin-top:12px}.actions button{flex:1}.part{padding:12px;border:1px solid #dbe5e9;border-radius:11px;margin:10px 0}.hint{background:#e6f2f1;padding:13px;border-radius:11px;font-size:13px;line-height:1.5}.bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:white;border-top:1px solid #dce5e8;padding:9px 4px calc(9px + env(safe-area-inset-bottom))}.bar button{background:none;border:0;font-size:12px;color:#34556a;padding:5px}.hide{display:none!important}
 
 /* Layout responsivo affinato per iPhone 12 Pro Max e altri schermi */
@@ -27,7 +27,39 @@ button{touch-action:manipulation;min-height:44px}
 #lockBox input{width:100%;font-size:18px;padding:14px;margin:8px 0 14px;border:1px solid #bac9d0;border-radius:10px}
 #lockBox button{width:100%;background:#087e83;color:white;border:0;padding:15px;border-radius:12px;font-weight:700}
 #lockError{color:#b22b2b;font-weight:700}
-</style></head><body><div id="lockScreen"><div id="lockBox"><h2>🔒 Officina Manager</h2>
+</style>
+<style id="sport-dark-theme">
+:root{color-scheme:dark;--bg:#0b111b;--panel:#151f2d;--panel2:#1b2938;--line:#304356;--text:#eff5fc;--muted:#a6b8ca;--accent:#18c4c0;--accent2:#0fa6a6}
+html,body{background:var(--bg)!important;color:var(--text)!important}
+header{background:linear-gradient(120deg,#111e2d,#102e38)!important;border-bottom:2px solid var(--accent);box-shadow:0 8px 28px #0005}
+header h1{letter-spacing:.3px}
+section h2{color:#f5f9ff;letter-spacing:.2px}
+.card,.item,.tile,.part,#lockBox{background:var(--panel)!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:0 5px 20px #0002}
+.card,.item,.part{border-radius:16px!important}
+.tile{border-radius:20px!important;transition:transform .15s,border-color .15s}
+.tile:active,.item:active{transform:scale(.985);border-color:var(--accent)!important}
+.tile b{color:var(--accent)}
+input,select,textarea{background:#101a27!important;color:var(--text)!important;border:1px solid #3a5063!important;border-radius:11px!important}
+input::placeholder,textarea::placeholder{color:#8c9eaf!important}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent)!important;outline-offset:1px;border-color:var(--accent)!important}
+label{color:#c6d7e6!important}
+.primary,#lockBox button{background:linear-gradient(125deg,#0f969a,#12b7b2)!important;color:#fff!important;border:0!important;box-shadow:0 4px 14px #009e9b35}
+.secondary{background:var(--panel2)!important;color:#e9f5ff!important;border:1px solid #456075!important}
+.secondary.danger,.danger{color:#ff9c9c!important}
+.muted,small.muted,#lockBox p{color:var(--muted)!important}
+.hint{background:#123039!important;color:#d8f8f6!important;border:1px solid #23646a!important}
+.total{color:#35e1d4!important}
+.bar{background:#101c2a!important;border-top:1px solid #365063!important;box-shadow:0 -5px 24px #0006}
+.bar button{color:#d6e6f5!important}
+hr{border:0;border-top:1px solid var(--line)}
+#lockScreen{background:var(--bg)!important}
+#lockError{color:#ff9c9c!important}
+.tire-options label{background:#152435!important;border-color:#40576a!important;color:#e5f0f9!important}
+.tire-options input{accent-color:var(--accent)!important}
+a{color:#53e0dd}
+@media(prefers-reduced-motion:reduce){.tile{transition:none}}
+</style>
+</head><body><div id="lockScreen"><div id="lockBox"><h2>🔒 Officina Manager</h2>
 <p id="lockMessage">Inserisci una password per proteggere l'archivio. Usane una che puoi ricordare: non è recuperabile.</p>
 <form id="lockForm"><label for="lockPassword">Password (almeno 8 caratteri)</label><input id="lockPassword" type="password" minlength="8" required autocomplete="off">
 <button id="lockButton" type="submit">Sblocca</button></form>
