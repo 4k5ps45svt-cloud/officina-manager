@@ -1,6 +1,6 @@
 {
-  "name": "Officina Manager",
-  "short_name": "Officina",
+  "name": "OTM Garage — Officina Manager",
+  "short_name": "OTM Garage",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,9 +9,15 @@
   "lang": "it",
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "otm-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "otm-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
