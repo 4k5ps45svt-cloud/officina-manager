@@ -71,16 +71,23 @@ const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2),today=(
  $('knownVehicles').innerHTML=vehicles.map(x=>`<option value="${e(x)}">`).join('');
  $('knownParts').innerHTML=materials.map(x=>`<option value="${e(x)}">`).join('');
 }
+let lastPlateLookup = null;
 function fillFromPlate(){
- const plate=v('j_plate').trim().toUpperCase().replace(/\\s/g,'');
- if(!plate)return;
- const match=db.clients.find(x=>(x.plate||'').toUpperCase().replace(/\\s/g,'')===plate)
- || [...db.jobs].reverse().find(x=>(x.plate||'').toUpperCase().replace(/\\s/g,'')===plate);
+ const plate=v('j_plate').trim().toUpperCase().replace(/\s/g,'');
+ const currentId=v('j_id');
+ const match=plate?(db.clients.find(x=>(x.plate||'').toUpperCase().replace(/\s/g,'')===plate)
+ || [...db.jobs].reverse().find(x=>(x.plate||'').toUpperCase().replace(/\s/g,'')===plate)):null;
+ // Preserve user-entered details until the plate actually changes.
+ if(lastPlateLookup===plate)return;
+ lastPlateLookup=plate;
  if(match){
-  if(!v('j_client').trim())s('j_client',match.name||match.client||'');
-  if(!v('j_vehicle').trim())s('j_vehicle',match.vehicle||'');
-  $('quickMsg').textContent='✓ Cliente e veicolo recuperati dalla targa.';
- }else $('quickMsg').textContent='Targa non trovata: inserisci i dati manualmente.';
+  s('j_client',match.name||match.client||'');
+  s('j_vehicle',match.vehicle||'');
+  $('quickMsg').textContent='✓ Cliente e veicolo aggiornati per questa targa.';
+ }else{
+  s('j_client','');s('j_vehicle','');
+  $('quickMsg').textContent=plate?'Targa non trovata: inserisci i dati del nuovo cliente.':'Inserisci una targa.';
+ }
 }
 function duplicateJob(){
  let plate=v('j_plate').trim().toUpperCase();
@@ -89,7 +96,7 @@ function duplicateJob(){
  let last=[...candidates].sort((a,b)=>b.date.localeCompare(a.date))[0];
  if(!confirm('Copiare l’ultimo lavoro trovato? Potrai modificarlo prima di salvarlo.'))return;
  const original=last;
- s('j_id','');s('j_date',today());
+ s('j_id','');s('j_date',today());lastPlateLookup=null;
  for(const k of ['client','plate','vehicle','km','desc','hours','rate','notes'])s('j_'+k,original[k]??'');
  s('j_status','Da fare');$('parts').innerHTML='';
  (original.parts||[]).forEach(addPart);
@@ -97,7 +104,7 @@ function duplicateJob(){
  $('quickMsg').textContent='✓ Lavoro duplicato. Verrà salvato come nuova scheda.';
 }
 function editJob(xid){let x=db.jobs.find(a=>a.id===xid)||{};
-refreshSuggestions();$('quickMsg').textContent='';
+refreshSuggestions();$('quickMsg').textContent='';lastPlateLookup=null;
 if(!x.id&&db.jobs.length){let previous=db.jobs[db.jobs.length-1];if(previous.rate!=null)x.rate=previous.rate}
 ['id','date','client','plate','vehicle','km','desc','status','hours','rate','notes'].forEach(k=>s('j_'+k,x[k]??(k==='date'?today():k==='status'?'Da fare':k==='hours'||k==='rate'?0:'')));$('parts').innerHTML='';(x.parts||[]).forEach(addPart);$('j_delete').classList.toggle('hide',!x.id);calc();go('jobEdit')}$('jobForm').onsubmit=async ev=>{ev.preventDefault();let x={};['id','date','client','plate','vehicle','km','desc','status','hours','rate','notes'].forEach(k=>x[k]=v('j_'+k).trim());x.id=x.id||id();x.plate=x.plate.toUpperCase();x.parts=getParts();x.total=calc();let i=db.jobs.findIndex(a=>a.id===x.id);if(i<0)db.jobs.push(x);else db.jobs[i]=x;if(await save())go('jobs')};function renderJobs(){let q=v('search').toLowerCase(),a=[...db.jobs].filter(x=>[x.plate,x.client,x.desc,x.vehicle].join(' ').toLowerCase().includes(q)).sort((x,y)=>y.date.localeCompare(x.date));$('jobItems').innerHTML=a.length?a.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editJob(this.dataset.id)"><strong>${e(x.plate)} — ${e(x.client)}</strong>${e(x.date)} · ${e(x.desc)}<div class="row"><span class="muted">${e(x.status)}</span><strong>${eur(x.total)}</strong></div></button>`).join(''):'<p class="muted">Nessun lavoro trovato.</p>'}function editClient(xid){let x=db.clients.find(a=>a.id===xid)||{};['id','name','phone','plate','vehicle','notes'].forEach(k=>s('c_'+k,x[k]||''));$('c_delete').classList.toggle('hide',!x.id);go('clientEdit')}$('clientForm').onsubmit=async ev=>{ev.preventDefault();let x={};['id','name','phone','plate','vehicle','notes'].forEach(k=>x[k]=v('c_'+k).trim());x.id=x.id||id();x.plate=x.plate.toUpperCase();let i=db.clients.findIndex(a=>a.id===x.id);if(i<0)db.clients.push(x);else db.clients[i]=x;if(await save())go('clients')};function renderClients(){$('clientItems').innerHTML=db.clients.length?db.clients.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editClient(this.dataset.id)"><strong>${e(x.name)}</strong>${e(x.plate)} · ${e(x.vehicle)}<br><span class="muted">${e(x.phone)}</span></button>`).join(''):'<p class="muted">Nessun cliente registrato.</p>'}function exportBackup(){alert('Attenzione: il backup esportato NON è cifrato. Conservalo in un luogo sicuro.');let b=new Blob([JSON.stringify({format:key,...db},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='officina-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}async function importBackup(){let f=$('backupFile').files[0];if(!f)return alert('Seleziona il file di backup.');try{let x=JSON.parse(await f.text());if(!['appointments','jobs','clients'].every(k=>Array.isArray(x[k])))throw Error('Formato non valido');if(!confirm('Sostituire tutti i dati presenti?'))return;db={appointments:x.appointments,jobs:x.jobs,clients:x.clients};if(await save()){alert('Backup ripristinato');go('home')}}catch(err){alert('Errore nel backup: '+err.message)}}if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script></body></html>
