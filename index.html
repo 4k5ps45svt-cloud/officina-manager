@@ -61,12 +61,15 @@ a{color:#53e0dd}
 </style>
 <style id="dashboard-pro">
 #home{padding-top:5px}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:2px 0 22px}.dash-head h2{font-size:29px;letter-spacing:-.8px;margin:5px 0 3px;font-weight:800}.dash-eyebrow{color:#26d4cb;font-size:10px;font-weight:900;letter-spacing:2.2px}.dash-head p{margin:0}.dash-logo{width:53px;height:53px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#174853,#122335);border:1px solid #328b8e;border-radius:15px;color:#e6fffe;font-weight:900;letter-spacing:-2px;font-size:21px;box-shadow:0 5px 22px #0005}.dash-logo span{color:#24d5cb;font-size:11px;margin-left:2px}.dash-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:25px}.dash-stat{min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:linear-gradient(160deg,#1c2b3c,#111c2a);border:1px solid #30485b;border-radius:17px;padding:13px 11px;color:#f0f7ff;box-shadow:0 8px 22px #0003}.dash-stat-label{font-size:9px;color:#9fb9ca;letter-spacing:.65px;font-weight:800}.dash-stat strong{font-size:33px;line-height:1.25;color:#2ee1d4;font-variant-numeric:tabular-nums}.dash-stat small{font-size:11px;color:#b8c9d9}.dash-section-title{display:flex;align-items:center;justify-content:space-between;margin:21px 0 11px;gap:8px}.dash-section-title h3{font-size:17px;margin:0;color:#f3f9ff}.dash-text-link{background:none;border:0;color:#40dcd5;font-size:12px;font-weight:700;padding:5px}.dash-actions{display:grid;grid-template-columns:1fr;gap:10px}.dash-action{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:14px;background:#172535;border:1px solid #355166;border-radius:15px;color:#eff8ff;font-weight:800;min-height:74px}.dash-action-primary{background:linear-gradient(115deg,#087d82,#0a5e6d);border-color:#18b6b6}.dash-action-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;background:#ffffff18;border:1px solid #ffffff2c;border-radius:12px;font-size:24px;font-weight:400}.dash-action span:nth-child(2){flex:1}.dash-action small{display:block;font-size:11px;font-weight:400;color:#c6d8e4;margin-top:3px}.dash-arrow{font-size:26px;font-weight:400;color:#b5e8e5}.dash-agenda{display:flex;flex-direction:column;gap:9px}.dash-appointment{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px;background:#162333;border:1px solid #32475a;border-radius:14px;color:#eaf5ff}.dash-time{font-size:17px;font-weight:800;color:#38d8d0;min-width:54px;font-variant-numeric:tabular-nums}.dash-appt-main{flex:1;min-width:0}.dash-appt-main strong{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dash-appt-main small{display:block;color:#a9bdcf;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}.dash-status{font-size:10px;font-weight:800;padding:5px 7px;border-radius:8px;background:#26384c;color:#bcd6ec;white-space:nowrap}.dash-status.progress{background:#124945;color:#64ead7}.dash-status.done{background:#25412d;color:#a1e3a9}.dash-status.cancelled{background:#45282e;color:#ffacb2}.dash-empty{padding:20px 16px;border:1px dashed #38546a;border-radius:14px;color:#a8c0d2;text-align:center;font-size:13px}.dash-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:23px}.dash-shortcuts button{display:flex;align-items:center;gap:7px;min-width:0;padding:13px 10px;border-radius:13px;background:#172535;color:#eaf4fc;border:1px solid #344a60;font-size:12px;font-weight:700}.dash-shortcuts button span{color:#35d8d0;font-size:19px}.dash-shortcuts button b{margin-left:auto;font-size:18px;color:#76a8b8}.dash-backup{color:#8298aa;font-size:11px;line-height:1.5;margin-top:22px;text-align:center}@media(max-width:370px){.dash-stat{padding:10px 7px}.dash-stat-label{font-size:8px}.dash-stat strong{font-size:27px}.dash-stat small{font-size:10px}.dash-status{font-size:9px}.dash-shortcuts button{font-size:11px}}
+</style><style id="back-navigation-style">
+#backNav{display:none;align-items:center;gap:8px;width:max-content;max-width:100%;margin:0 0 14px;padding:10px 16px;border-radius:12px;background:#182c3b;color:#e7f8fb;border:1px solid #385568;font-weight:700;font-size:14px;box-shadow:0 3px 12px #0003}
+#backNav:active{background:#244557}#backNav .back-arrow{font-size:21px;line-height:1;color:#35e1d4}
 </style></head><body><div id="lockScreen"><div id="lockBox"><h2>🔒 Officina Manager</h2>
 <p id="lockMessage">Inserisci una password per proteggere l'archivio. Usane una che puoi ricordare: non è recuperabile.</p>
 <form id="lockForm"><label for="lockPassword">Password (almeno 8 caratteri)</label><input id="lockPassword" type="password" minlength="8" required autocomplete="off">
 <button id="lockButton" type="submit">Sblocca</button></form>
 <p id="lockError" role="alert"></p>
-<p>La password non viene inviata a un server. I dati sono cifrati su questo dispositivo.</p></div></div><header><h1>🔧 Officina Manager</h1><small>La tua officina, sempre con te</small></header><main class="wrap">
+<p>La password non viene inviata a un server. I dati sono cifrati su questo dispositivo.</p></div></div><header><h1>🔧 Officina Manager</h1><small>La tua officina, sempre con te</small></header><main class="wrap"><button type="button" id="backNav" onclick="goBack()" aria-label="Torna alla schermata precedente"><span class="back-arrow" aria-hidden="true">←</span> Indietro</button>
 <section id="home" class="active">
 <div class="dash-head"><div><div class="dash-eyebrow">PANORAMICA OFFICINA</div><h2>Il tuo cruscotto</h2><p id="dashDate" class="muted"></p></div><div class="dash-logo" aria-hidden="true">OM<span>●</span></div></div>
 <div class="dash-stats"><button type="button" class="dash-stat" onclick="go('agenda')"><span class="dash-stat-label">OGGI</span><strong id="dashToday">0</strong><small>Appuntamenti</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">IN OFFICINA</span><strong id="dashProgress">0</strong><small>Lavori in corso</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">COMPLETATI</span><strong id="dashDone">0</strong><small>Lavori</small></button></div>
@@ -167,7 +170,24 @@ function checkedValue(name){return document.querySelector('input[name="'+name+'"
 function setCheckedValue(name,value){let option=[...document.querySelectorAll('input[name="'+name+'"]')].find(x=>x.value===value);(option||document.querySelector('input[name="'+name+'"]')).checked=true}
 function tireCharge(){let service=checkedValue('tireService');if(service==='none'||!service)return 0;let rate=v('j_tireRate');return Number(rate)||0}
 function updateTireServiceRate(){let service=checkedValue('tireService');s('j_tireRate',service==='wheels'?getRates().wheels:service==='tires'?getRates().tires:0);calc()}
-function go(page){if(page==='home')renderDashboard();document.querySelectorAll('main section').forEach(x=>x.classList.toggle('active',x.id===page));if(page==='agenda')renderAppts();if(page==='jobs')renderJobs();if(page==='clients')renderClients();if(page==='settings')showRates();scrollTo(0,0)}function renderDashboard(){
+let navHistory=[];
+function goBack(){
+ const previous=navHistory.pop()||'home';
+ go(previous,true);
+}
+function go(page,fromBack=false){
+ const current=document.querySelector('main section.active')?.id||'home';
+ if(!document.getElementById(page))return;
+ if(!fromBack&&page!==current){
+  if(page==='home')navHistory=[];
+  else navHistory.push(current);
+ }
+ if(page==='home')renderDashboard();
+ document.querySelectorAll('main section').forEach(x=>x.classList.toggle('active',x.id===page));
+ if(page==='agenda')renderAppts();if(page==='jobs')renderJobs();if(page==='clients')renderClients();if(page==='settings')showRates();
+ $('backNav').style.display=page==='home'?'none':'inline-flex';
+ scrollTo(0,0);
+}function renderDashboard(){
  if(!unlocked)return;
  const date=today(),todayAppts=db.appointments.filter(a=>a.date===date).sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
  const progress=db.jobs.filter(j=>j.status==='In lavorazione').length;
