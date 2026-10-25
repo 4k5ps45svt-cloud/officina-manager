@@ -175,6 +175,12 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 #otmNav #backNav{margin:0;display:inline-flex}
 #otmNav #homeNav{background:#0b5058;border-color:#258b93}
 @media(max-width:390px){#otmNav button{padding:9px 11px}}
+</style><style>
+.otm-booking-overlay:not([hidden]){position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.otm-booking-dialog{width:min(100%,440px);max-height:90dvh;overflow:auto;background:#13252c;color:#fff;border:1px solid #4b7379;border-radius:16px;padding:20px;box-shadow:0 15px 55px #0009}
+.otm-booking-dialog input{width:100%;max-width:100%;font-size:18px;min-height:48px;color-scheme:dark}
+.otm-booking-weekday{display:block;margin-top:8px;color:#a5e8e7}
+.otm-booking-dialog .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 </style></head><body><div id="lockScreen"><div id="lockBox"><h2>🔒 Officina Manager</h2>
 <p id="lockMessage">Inserisci una password per proteggere l'archivio. Usane una che puoi ricordare: non è recuperabile.</p>
 <form id="lockForm"><label for="lockPassword">Password (almeno 8 caratteri)</label><input id="lockPassword" type="password" minlength="8" required autocomplete="off">
@@ -218,7 +224,7 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 <section id="reminders"><h2>Promemoria manutenzioni</h2><p class="hint">Promemoria visibili quando apri l'app. Non sono notifiche automatiche a telefono bloccato.</p><div class="field"><label>Mostra promemoria</label><select id="reminderFilter" onchange="renderReminders()"><option value="all">Tutti</option><option value="due">Scaduti e prossimi 30 giorni</option></select></div><div id="reminderItems"></div></section>
 <section id="stats"><h2>Statistiche</h2><div class="field"><label>Mese</label><input id="statsMonth" type="month" onchange="renderStats()"></div><div id="statsItems"></div><div id="statsYearItems"></div></section>
 <section id="settings"><h2>Impostazioni e backup</h2><div class="card"><strong>IVA preventivi</strong><p class="muted">Predefinita 0%. Verifica l’aliquota applicabile alla tua attività.</p><select id="cfg_vat"><option value="0">0%</option><option value="8.1">8,1%</option></select><button class="primary" style="margin-top:10px" onclick="saveVat()">Salva IVA</button></div><div class="card"><strong>Tariffe predefinite (CHF)</strong><p class="muted">Le modifiche valgono per le nuove schede. I lavori già salvati conservano i propri importi.</p><div class="field"><label>Manodopera / ora</label><input id="cfg_hour" type="number" min="0" step="0.01" inputmode="decimal"></div><div class="field"><label>Sostituzione ruote</label><input id="cfg_wheels" type="number" min="0" step="0.01" inputmode="decimal"></div><div class="field"><label>Sostituzione pneumatici</label><input id="cfg_tires" type="number" min="0" step="0.01" inputmode="decimal"></div><button type="button" class="primary" onclick="saveRates()">Salva tariffe</button></div><div class="card"><strong>🔓 Accesso automatico</strong><p class="muted">Apri OTM Garage senza digitare la password su questo dispositivo. L'archivio resta cifrato, ma chiunque possa usare questo browser potrà aprirlo. Attiva separatamente su Mac e iPhone. Usa questa opzione soltanto su dispositivi personali protetti da codice.</p><p id="autoUnlockStatus" class="hint">Verifica stato…</p><button type="button" class="primary" id="autoUnlockEnable" onclick="enableAutoUnlock()">Attiva accesso automatico</button><button type="button" class="secondary" id="autoUnlockDisable" style="margin-top:10px;width:100%" onclick="disableAutoUnlock()">Disattiva accesso automatico</button></div><div class="card"><strong>🔐 Cambia password</strong><p class="muted">La modifica conserva l'archivio. Prima esporta un backup e custodiscilo in un luogo sicuro: il backup non è cifrato.</p><form id="changePasswordForm"><div class="field"><label for="oldPassword">Password attuale</label><input id="oldPassword" type="password" required autocomplete="current-password"></div><div class="field"><label for="newPassword">Nuova password (almeno 8 caratteri)</label><input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></div><div class="field"><label for="confirmPassword">Conferma nuova password</label><input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password"></div><button class="primary" id="changePasswordButton" type="submit">Cambia password</button><p class="muted" id="changePasswordMessage" role="status"></p></form></div><div class="card"><strong>Esporta archivio</strong><p class="muted">Il backup contiene dati in chiaro: conservalo in una posizione protetta.</p><button class="primary" onclick="exportBackup()">Scarica backup</button></div><div class="card"><strong>Ripristina backup</strong><p class="muted">Sostituisce i dati attuali.</p><input id="backupFile" type="file" accept=".json,application/json"><button class="secondary" style="margin-top:10px;width:100%" onclick="importBackup()">Ripristina</button></div><p class="hint">I dati vengono salvati localmente nel browser su questo dispositivo, non su GitHub. La cancellazione dei dati di Safari può eliminarli. L’archivio è protetto dalla password. Esegui backup regolari: i file esportati non sono cifrati.</p></section>
-</main><script>
+<div id="quoteBookingOverlay" class="otm-booking-overlay" hidden role="presentation"><div class="otm-booking-dialog" role="dialog" aria-modal="true" aria-labelledby="quoteBookingTitle"><h2 id="quoteBookingTitle">Conferma e prenota</h2><p class="muted">Scegli il giorno dal calendario e l'orario dell'appuntamento.</p><div class="field"><label for="quoteBookingDate">Data appuntamento</label><input id="quoteBookingDate" type="date" required onchange="updateQuoteBookingDay()"><strong id="quoteBookingDay" class="otm-booking-weekday" aria-live="polite"></strong></div><div class="field"><label for="quoteBookingTime">Ora appuntamento</label><input id="quoteBookingTime" type="time" value="09:00" required></div><div class="actions"><button type="button" class="secondary" onclick="closeQuoteBooking()">Annulla</button><button type="button" class="primary" id="quoteBookingConfirm" onclick="confirmQuoteBooking()">Salva appuntamento</button></div></div></div></main><script>
 'use strict';const $=id=>document.getElementById(id),v=id=>$(id).value,s=(id,x)=>$(id).value=x??'',key='officina_manager_v1';let db={appointments:[],jobs:[],clients:[]};let cryptoKey=null, unlocked=false;
 const secureKey=key+'_encrypted';
 
@@ -826,27 +832,44 @@ async function deleteQuote(){
   closeQuote();renderQuotes();alert('Preventivo eliminato.');
  }else db.quotes=before;
 }
-async function convertQuoteToJob(){
+let pendingQuoteBookingId='';
+function updateQuoteBookingDay(){
+ const iso=v('quoteBookingDate');const el=$('quoteBookingDay');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){el.textContent='Seleziona una data';return;}
+ const dt=new Date(iso+'T12:00:00');
+ if(Number.isNaN(dt.getTime())){el.textContent='Data non valida';return;}
+ const weekday=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'][dt.getDay()];
+ el.textContent=weekday.charAt(0).toUpperCase()+weekday.slice(1)+' '+dateToSwiss(iso);
+}
+function closeQuoteBooking(){ $('quoteBookingOverlay').hidden=true;pendingQuoteBookingId=''; }
+function convertQuoteToJob(){
  const quoteId=v('q_id'),q=(db.quotes||[]).find(q=>q.id===quoteId);
  if(!q)return alert('Salva prima il preventivo, poi conferma e prenota.');
  const existing=db.appointments.find(a=>a.id===q.linkedAppointmentId||a.sourceQuoteId===quoteId);
  if(existing){closeQuote();editAppt(existing.id);return;}
  if(!q.client||!q.plate)return alert('Per prenotare servono cliente e targa. Completa e salva il preventivo.');
- const chosenDateText=prompt('Data appuntamento (gg.mm.aaaa):',dateToSwiss(today()));
- if(chosenDateText===null)return;
- const chosenDate=swissToDate(chosenDateText);
- if(chosenDate===null)return;
- if(!chosenDate)return alert('Data non valida: usa gg.mm.aaaa.');
- const chosenTime=prompt('Ora appuntamento (HH:MM):','09:00');
- if(chosenTime===null)return;
- if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(chosenTime))return alert('Orario non valido (HH:MM).');
+ pendingQuoteBookingId=quoteId;s('quoteBookingDate',today());s('quoteBookingTime','09:00');
+ updateQuoteBookingDay();$('quoteBookingOverlay').hidden=false;
+}
+async function confirmQuoteBooking(){
+ const quoteId=pendingQuoteBookingId,q=(db.quotes||[]).find(q=>q.id===quoteId);
+ if(!q){closeQuoteBooking();return alert('Preventivo non trovato.');}
+ const existing=db.appointments.find(a=>a.id===q.linkedAppointmentId||a.sourceQuoteId===quoteId);
+ if(existing){closeQuoteBooking();closeQuote();editAppt(existing.id);return;}
+ const chosenDate=v('quoteBookingDate'),chosenTime=v('quoteBookingTime');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(chosenDate)||swissToDate(dateToSwiss(chosenDate))!==chosenDate)return alert('Seleziona una data valida dal calendario.');
+ if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(chosenTime))return alert('Seleziona un orario valido.');
  const car=(db.clients||[]).find(c=>normalizeSearch(c.name)===normalizeSearch(q.client)&&normalizedPlate(c.plate)===normalizedPlate(q.plate))||{};
  const appointment={id:id(),date:chosenDate,time:chosenTime,client:q.client,plate:q.plate,vehicle:car.vehicle||'',vehicleId:car.id||'',desc:q.desc,status:'Prenotato',sourceQuoteId:quoteId};
  const oldAppointments=[...db.appointments],oldQuotes=[...(db.quotes||[])];
- db.appointments.push(appointment);
- db.quotes=db.quotes.map(item=>item.id===quoteId?{...item,linkedAppointmentId:appointment.id,status:'Accettato'}:item);
- if(await save()){closeQuote();renderQuotes();editAppt(appointment.id);alert('Preventivo confermato: appuntamento creato con data e ora. Il lavoro si avvia dall’appuntamento.');}
- else{db.appointments=oldAppointments;db.quotes=oldQuotes;}
+ const btn=$('quoteBookingConfirm');btn.disabled=true;
+ try{
+  db.appointments.push(appointment);
+  db.quotes=db.quotes.map(item=>item.id===quoteId?{...item,linkedAppointmentId:appointment.id,status:'Accettato'}:item);
+  if(await save()){closeQuoteBooking();closeQuote();renderQuotes();editAppt(appointment.id);alert('Appuntamento creato per '+dateToSwiss(chosenDate)+' alle '+chosenTime+'.');}
+  else{db.appointments=oldAppointments;db.quotes=oldQuotes;}
+ }catch(e){db.appointments=oldAppointments;db.quotes=oldQuotes;alert('Impossibile salvare l’appuntamento. Riprova.');}
+ finally{btn.disabled=false;}
 }
 function quoteTotal(q){const net=(Number(q.parts)||0)+(Number(q.hours)||0)*(Number(q.rate)||0);return {net,vat:net*q.vat/100,total:net*(1+q.vat/100)}}
 function renderQuotes(){const box=$('quoteItems');box.replaceChildren();for(const q of [...(db.quotes||[])].reverse()){const b=document.createElement('button');b.className='item';b.textContent=dateToSwiss(q.date||'')+' · '+q.client+' · '+eur(quoteTotal(q).total)+' · '+(q.status||'Bozza')+' · '+(q.payment||'Non pagato')+(q.linkedJobId?' · 🔧 Scheda lavoro':'');b.onclick=()=>newQuote(q.id);box.append(b)}if(!(db.quotes||[]).length)box.textContent='Nessun preventivo.'}
