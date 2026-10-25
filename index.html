@@ -843,6 +843,54 @@ async function convertQuoteToJob(){
 }
 function quoteTotal(q){const net=(Number(q.parts)||0)+(Number(q.hours)||0)*(Number(q.rate)||0);return {net,vat:net*q.vat/100,total:net*(1+q.vat/100)}}
 function renderQuotes(){const box=$('quoteItems');box.replaceChildren();for(const q of [...(db.quotes||[])].reverse()){const b=document.createElement('button');b.className='item';b.textContent=(q.date||'')+' · '+q.client+' · '+eur(quoteTotal(q).total)+' · '+(q.status||'Bozza')+' · '+(q.payment||'Non pagato')+(q.linkedJobId?' · 🔧 Scheda lavoro':'');b.onclick=()=>newQuote(q.id);box.append(b)}if(!(db.quotes||[]).length)box.textContent='Nessun preventivo.'}
+// Generatore PDF A4 offline: una pagina JPEG per foglio, senza servizi esterni.
+// La condivisione iOS riceve un vero application/pdf, non un file HTML.
+async function createQuotePdf(q,t,logoUrl){
+ const W=1240,H=1754,M=92,R=W-M,usable=R-M;
+ const pages=[];let canvas,ctx,y;
+ function page(){canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);y=M;}
+ function font(size=25,bold=false){ctx.font=(bold?'700 ':'')+size+'px Arial,sans-serif';}
+ function line(text,x,yy,size=25,bold=false,color='#152b3a') {font(size,bold);ctx.fillStyle=color;ctx.fillText(String(text??''),x,yy);}
+ function wrap(text,maxWidth,size=25,bold=false){font(size,bold);const out=[];for(const para of String(text??'').split('\n')){let row='';for(const word of para.split(/\s+/)){const next=row?row+' '+word:word;if(ctx.measureText(next).width>maxWidth && row){out.push(row);row=word;}else row=next;}out.push(row);}return out;}
+ function ensure(h){if(y+h>H-M){finish();page();}}
+ function finish(){const data=canvas.toDataURL('image/jpeg',0.88).split(',')[1];const bin=atob(data);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);pages.push(arr);}
+ function block(text,size=25,bold=false,color='#152b3a',gap=12){const rows=wrap(text,usable,size,bold);const h=rows.length*(size+12)+gap;ensure(h);for(const row of rows){line(row,M,y+size,size,bold,color);y+=size+12;}y+=gap;}
+ function rule(){ensure(24);ctx.strokeStyle='#d4e2e5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(M,y);ctx.lineTo(R,y);ctx.stroke();y+=20;}
+ function money(n){return 'CHF '+(Number(n)||0).toFixed(2);}
+ function item(desc,amount){const right=money(amount);font(24,true);const rw=ctx.measureText(right).width;const rows=wrap(desc,usable-rw-34,24);ensure(Math.max(58,rows.length*34+16));line(right,R-rw,y+28,24,true);for(const row of rows){line(row,M,y+28,24);y+=34;}y+=18;rule();}
+ page();
+ try{const img=new Image();img.src=logoUrl;await new Promise((resolve)=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,1500)});if(img.complete&&img.naturalWidth)ctx.drawImage(img,M,y,125,125);}catch(_){}
+ line('OTM GARAGE',M+155,y+55,52,true,'#0b4053');line('La tua officina, sempre con te',M+157,y+95,22,false,'#57717e');y+=160;
+ ctx.fillStyle='#087f85';ctx.fillRect(M,y,usable,6);y+=55;
+ block('PREVENTIVO',48,true,'#087f85',18);
+ block('Cliente: '+q.client,27,true);block('Data: '+dateToSwiss(q.date||today())+'     Targa: '+(q.plate||'—'),25);rule();
+ block('INTERVENTO PREVISTO',23,true,'#087f85');block(q.desc,25,false,'#152b3a',25);
+ block('Stato: '+q.status+'     Pagamento: '+q.payment,22);block('Acconto: '+money(q.deposit),22);rule();
+ block('DESCRIZIONE / IMPORTO',24,true,'#087f85',10);
+ if((q.materials||[]).length){for(const m of q.materials)item((m.desc||'Materiale')+' ('+m.qty+' × '+money(m.price)+')',Number(m.qty)*Number(m.price));}
+ else item('Ricambi e materiali',q.parts);
+ item('Manodopera ('+q.hours+' ore × '+money(q.rate)+')',q.hours*q.rate);
+ item('Subtotale',t.net);item('IVA ('+q.vat+'%)',t.vat);
+ ensure(95);line('TOTALE',M,y+48,35,true,'#087f85');font(35,true);const total=money(t.total);line(total,R-ctx.measureText(total).width,y+48,35,true,'#087f85');y+=95;rule();
+ block('Preventivo indicativo, salvo conferma.',20,false,'#657b86');
+ finish();
+ const encoder=new TextEncoder();const chunks=[];let length=0;const offsets=[0];
+ function push(bytes){if(typeof bytes==='string')bytes=encoder.encode(bytes);chunks.push(bytes);length+=bytes.length;}
+ function obj(id,body){offsets[id]=length;push(id+' 0 obj\n'+body+'\nendobj\n');}
+ push('%PDF-1.4\n');const n=pages.length,ids=[];
+ for(let i=0;i<n;i++)ids.push(3+i*3);
+ obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+ obj(2,'<< /Type /Pages /Kids ['+ids.map(id=>id+' 0 R').join(' ')+'] /Count '+n+' >>');
+ for(let i=0;i<n;i++){
+  const id=ids[i],img=pages[i];
+  obj(id,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 '+(id+1)+' 0 R >> >> /Contents '+(id+2)+' 0 R >>');
+  offsets[id+1]=length;push((id+1)+' 0 obj\n<< /Type /XObject /Subtype /Image /Width '+W+' /Height '+H+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+img.length+' >>\nstream\n');push(img);push('\nendstream\nendobj\n');
+  const cmd='q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n';obj(id+2,'<< /Length '+encoder.encode(cmd).length+' >>\nstream\n'+cmd+'endstream');
+ }
+ const start=length;push('xref\n0 '+(3+n*3)+'\n0000000000 65535 f \n');for(let i=1;i<3+n*3;i++)push(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+ push('trailer\n<< /Size '+(3+n*3)+' /Root 1 0 R >>\nstartxref\n'+start+'\n%%EOF');
+ return new Blob(chunks,{type:'application/pdf'});
+}
 function printQuote(){
  const q=quoteDraft();
  if(!q.client||!q.desc)return alert('Compila prima cliente e descrizione.');
@@ -875,34 +923,24 @@ function printQuote(){
  overlay.replaceChildren();
  const toolbar=document.createElement('nav');toolbar.className='a4bar';
  const back=document.createElement('button');back.textContent='← Torna al preventivo';back.onclick=()=>{overlay.hidden=true;overlay.style.display='none'};
- const print=document.createElement('button');print.textContent='🖨 Stampa A4';print.onclick=()=>{
-  // Su iOS il comando deve essere eseguito direttamente dal gesto dell'utente.
-  // Stampa il foglio visibile senza passare da una finestra vuota/popup.
-  try{window.print()}catch(err){alert('Stampa non disponibile in questa modalità. Usa “Apri documento” e poi Condividi → Stampa in Safari.');}
- };
- const openDoc=document.createElement('button');openDoc.textContent='↗ Apri documento';openDoc.onclick=()=>{
-  // Apertura separata: su alcune versioni di iOS le finestre della PWA restano nella PWA.
-  const tab=window.open('about:blank','_blank');
-  if(!tab){alert('Impossibile aprire una scheda. Usa “Condividi documento”.');return;}
-  tab.document.open();tab.document.write(printable);tab.document.close();tab.focus();
- };
- const shareDoc=document.createElement('button');shareDoc.textContent='↗ Condividi documento';shareDoc.onclick=async()=>{
-  // Usa il foglio di condivisione nativo iOS, evitando window.print() nella PWA.
-  // Il file HTML conserva il CSS @page A4 e puo essere aperto in Safari e stampato.
-  const documentFile=new File([printable],'OTM-Preventivo-A4.html',{type:'text/html'});
+ const shareDoc=document.createElement('button');shareDoc.textContent='↗ Condividi PDF';
+ shareDoc.onclick=async()=>{
+  shareDoc.disabled=true;shareDoc.textContent='Preparazione PDF…';
   try{
-   if(navigator.canShare && navigator.canShare({files:[documentFile]}) && navigator.share){
-    await navigator.share({files:[documentFile],title:'Preventivo OTM Garage A4'});
-    return;
+   const pdf=await createQuotePdf(q,t,logo);
+   const filename='OTM-Preventivo-'+(q.date||today())+'.pdf';
+   const file=new File([pdf],filename,{type:'application/pdf'});
+   if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+    try{await navigator.share({files:[file],title:'Preventivo OTM Garage'});return;}
+    catch(err){if(err && err.name==='AbortError')return;}
    }
-  }catch(err){if(err && err.name==='AbortError')return;}
-  // Ripiego: esporta il documento in File, apribile poi con Safari.
-  const blob=new Blob([printable],{type:'text/html'}),url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='OTM-Preventivo-A4.html';document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),60000);
-  alert('Documento esportato. Aprilo in Safari dall’app File e usa Condividi → Stampa.');
+   const url=URL.createObjectURL(pdf);const a=document.createElement('a');a.href=url;a.download=filename;
+   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+   alert('PDF salvato. Aprilo nell’app File per stamparlo o inviarlo tramite WhatsApp.');
+  }catch(err){alert('Impossibile creare il PDF: '+(err?.message||err));}
+  finally{shareDoc.disabled=false;shareDoc.textContent='↗ Condividi PDF';}
  };
- toolbar.append(back,print,shareDoc,openDoc);overlay.append(toolbar,parsed.querySelector('.sheet'));
+ toolbar.append(back,shareDoc);overlay.append(toolbar,parsed.querySelector('.sheet'));
  overlay.hidden=false;overlay.style.display='block';overlay.scrollTop=0;
 
 }
