@@ -180,7 +180,6 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 <div class="dash-section-title"><h3>Nuovo in officina</h3></div>
 <div class="dash-actions">
 <button type="button" class="dash-action dash-action-primary" onclick="editAppt()"><span class="dash-action-icon">＋</span><span>Nuovo appuntamento<small>Organizza il prossimo intervento</small></span><span class="dash-arrow">›</span></button>
-<button type="button" class="dash-action" onclick="editJob()"><span class="dash-action-icon">⚒</span><span>Nuovo lavoro<small>Registra intervento e pagamento</small></span><span class="dash-arrow">›</span></button>
 <button type="button" class="dash-action" onclick="go('quotes');newQuote()"><span class="dash-action-icon">▤</span><span>Nuovo preventivo<small>Cliente, auto, importi e PDF A4</small></span><span class="dash-arrow">›</span></button>
 </div>
 <div class="card" style="margin-bottom:12px"><strong id="otmAllAgendaCount">0 lavori attivi in agenda · tutte le date</strong></div><div class="dash-stats"><button type="button" class="dash-stat" onclick="go('agenda')"><span class="dash-stat-label">OGGI</span><strong id="dashToday">0</strong><small>Appuntamenti</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">IN OFFICINA</span><strong id="dashProgress">0</strong><small>Lavori in corso</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">COMPLETATI</span><strong id="dashDone">0</strong><small>Lavori</small></button></div>
@@ -197,15 +196,15 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 <p class="dash-backup">🔒 I dati sono conservati sul dispositivo. Ricorda di effettuare periodicamente un backup.</p>
 </section>
 <section id="agenda"><h2>Appuntamenti</h2><div class="card"><strong id="agendaCount">0 lavori in agenda</strong><p class="muted" id="agendaTodayCount">0 appuntamenti oggi</p></div><button class="primary" onclick="editAppt()">+ Nuovo appuntamento</button><div id="appts"></div></section>
-<section id="apptEdit"><h2>Appuntamento</h2><form id="apptForm"><input id="a_id" type="hidden"><div class="two"><div class="field"><label>Data</label><input id="a_date" type="date" required></div><div class="field"><label>Ora</label><input id="a_time" type="time" required></div></div><div class="field"><label>Cliente</label><input id="a_client" required autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Targa</label><input id="a_plate" autocapitalize="characters" autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Auto</label><input id="a_vehicle" oninput="clearApptSelection()"></div><div class="actions"><button type="button" class="secondary" onclick="addAnotherApptCar()">➕ Aggiungi un’altra auto al cliente</button></div><p id="a_customerHint" class="muted" aria-live="polite"></p><input id="a_vehicleId" type="hidden"><div class="field"><label>Seleziona il veicolo dall’archivio</label><div id="a_matches" class="card" style="display:none"></div><small class="muted" id="a_matchHelp">Cerca per nome o targa. Se ci sono più veicoli, scegli quello giusto.</small></div><p class="hint" id="a_saveClientHelp">Quando premi «Salva appuntamento», se il cliente o l’auto non sono ancora registrati, ti chiederò se vuoi aggiungerli all’archivio. Se sono già registrati, non creerò doppioni.</p><div class="field"><label>Intervento previsto</label><textarea id="a_desc"></textarea></div><div class="field"><label>Stato</label><select id="a_status"><option>Prenotato</option><option>In lavorazione</option><option>Completato</option><option>Annullato</option></select></div><button class="primary">Salva appuntamento</button></form><div class="card" id="a_jobPanel" style="display:none"><button type="button" class="primary" id="a_createJob" onclick="createJobFromAppt()">🔧 Crea lavoro da appuntamento</button><div id="a_linkedJobs" class="muted"></div><small class="muted">Lo stato passa a “In lavorazione” soltanto quando salvi il lavoro.</small></div><div class="actions"><button class="secondary" onclick="goBack()">Home</button><button id="a_delete" class="secondary danger" onclick="delItem('appointments','a_id','agenda')">Elimina</button></div></section>
-<section id="jobs"><h2>Lavori attivi</h2><div class="card"><strong id="jobsAgendaCount">0 appuntamenti in agenda</strong><div id="jobsAgendaItems"></div></div><button type="button" class="secondary" onclick="go('workHistory')">📚 Storico lavori completati</button><button class="primary" onclick="editJob()">+ Nuovo lavoro</button><div class="field" style="margin-top:14px"><label>Cerca targa, cliente o lavoro</label><input id="search" placeholder="Cerca..." oninput="renderJobs()"></div><div id="jobItems"></div></section>
-<section id="workHistory"><h2>Storico lavori completati</h2><div class="field"><label>Cerca per cliente, targa, auto o intervento</label><input id="historySearch" type="search" oninput="renderWorkHistory()" placeholder="Nome, targa, marca, modello..."></div><div id="historyItems"></div></section><section id="jobRead"><h2>Intervento completato</h2><div id="jobReadDetails" class="card"></div><div class="actions"><button class="primary" onclick="printHistoryJob()">🖨 Stampa intervento</button><button class="secondary" onclick="requestJobCorrection()">✏️ Rettifica</button><button class="secondary" onclick="go('home')">Home</button></div></section><section id="jobEdit"><h2>Scheda lavoro</h2>
+<section id="apptEdit"><h2>Appuntamento</h2><form id="apptForm"><input id="a_id" type="hidden"><div class="two"><div class="field"><label>Data</label><input id="a_date" type="date" required></div><div class="field"><label>Ora</label><input id="a_time" type="time" required></div></div><div class="field"><label>Cliente</label><input id="a_client" required autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Targa</label><input id="a_plate" autocapitalize="characters" autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Auto</label><input id="a_vehicle" oninput="clearApptSelection()"></div><div class="actions"><button type="button" class="secondary" onclick="addAnotherApptCar()">➕ Aggiungi un’altra auto al cliente</button></div><p id="a_customerHint" class="muted" aria-live="polite"></p><input id="a_vehicleId" type="hidden"><div class="field"><label>Seleziona il veicolo dall’archivio</label><div id="a_matches" class="card" style="display:none"></div><small class="muted" id="a_matchHelp">Cerca per nome o targa. Se ci sono più veicoli, scegli quello giusto.</small></div><p class="hint" id="a_saveClientHelp">Quando premi «Salva appuntamento», se il cliente o l’auto non sono ancora registrati, ti chiederò se vuoi aggiungerli all’archivio. Se sono già registrati, non creerò doppioni.</p><div class="field"><label>Intervento previsto</label><textarea id="a_desc"></textarea></div><div class="field"><label>Stato</label><select id="a_status"><option>Prenotato</option><option>In lavorazione</option><option>Completato</option><option>Annullato</option></select></div><button class="primary">Salva appuntamento</button></form><div class="card" id="a_jobPanel" style="display:none"><button type="button" class="primary" id="a_createJob" onclick="createJobFromAppt()">🔧 Avvia lavoro</button><div id="a_linkedJobs" class="muted"></div><small class="muted">Lo stato passa a “In lavorazione” soltanto quando salvi il lavoro.</small></div><div class="actions"><button class="secondary" onclick="goBack()">Home</button><button id="a_delete" class="secondary danger" onclick="delItem('appointments','a_id','agenda')">Elimina</button></div></section>
+<section id="jobs"><h2>Lavori attivi</h2><div class="card"><strong id="jobsAgendaCount">0 appuntamenti in agenda</strong><div id="jobsAgendaItems"></div></div><button type="button" class="secondary" onclick="go('workHistory')">📚 Storico lavori completati</button><div class="field" style="margin-top:14px"><label>Cerca targa, cliente o lavoro</label><input id="search" placeholder="Cerca..." oninput="renderJobs()"></div><div id="jobItems"></div></section>
+<section id="workHistory"><h2>Storico lavori completati</h2><div class="field"><label>Cerca per cliente, targa, auto o intervento</label><input id="historySearch" type="search" oninput="renderWorkHistory()" placeholder="Nome, targa, marca, modello..."></div><div id="historyItems"></div></section><section id="jobRead"><h2>Intervento completato</h2><div id="jobReadDetails" class="card"></div><div class="actions"><button class="primary" onclick="shareHistoryJobPdf()">↗ Condividi PDF intervento</button><button class="secondary" onclick="requestJobCorrection()">✏️ Rettifica</button><button class="secondary" onclick="go('home')">Home</button></div></section><section id="jobEdit"><h2>Scheda lavoro</h2>
 <div class="card"><strong>⚡ Compilazione rapida</strong><p class="muted">Scrivi una targa già registrata per recuperare cliente e veicolo. Puoi anche duplicare un vecchio lavoro.</p>
 <div class="actions"><button type="button" class="secondary" onclick="fillFromPlate()">🔎 Cerca targa</button><button type="button" class="secondary" onclick="duplicateJob()">📋 Duplica lavoro</button></div>
 <div id="quickMsg" class="muted" aria-live="polite"></div><div id="j_apptInfo" class="hint" style="display:none"></div></div><form id="jobForm"><input id="j_id" type="hidden"><input id="j_appointmentId" type="hidden"><div class="two"><div class="field"><label>Data appuntamento in agenda</label><input id="j_date" type="date" required></div><div class="field"><label>Orario appuntamento</label><input id="j_time" type="time" required></div></div><p class="hint">Scegli data e ora: il lavoro verrà aggiunto automaticamente all’agenda.</p><div class="field"><label>Cliente</label><input id="j_client" required autocomplete="off" oninput="searchJobVehicles()"><datalist id="knownClients"></datalist></div><div class="field"><label>Seleziona auto del cliente</label><div id="j_matches" class="card" style="display:none"></div><small id="j_matchHelp" class="muted">Scrivi il nome del cliente e scegli il veicolo dall’elenco.</small></div><div class="field"><label>Targa</label><input id="j_plate" required autocapitalize="characters" onblur="fillFromPlate()"></div><div class="field"><label>Veicolo</label><input id="j_vehicle" list="knownVehicles"><datalist id="knownVehicles"></datalist></div><div class="field"><label>Numero di telaio (VIN)</label><input id="j_vin" maxlength="17" autocapitalize="characters" placeholder="17 caratteri"></div><div class="two"><div class="field"><label>Codice motore</label><input id="j_engine" autocapitalize="characters"></div><div class="field"><label>Potenza (kW)</label><input id="j_kw" type="number" min="0" step="0.01" inputmode="decimal"></div></div><div class="field"><label>Numero identificativo (altro)</label><input id="j_ident" placeholder="Es. numero documento o identificativo interno"></div><div class="field"><label>Km</label><input id="j_km" type="number" min="0"></div><div class="field"><label>Intervento eseguito</label><textarea id="j_desc" required></textarea></div><div class="card"><strong>STATO DEL LAVORO</strong><div class="otm-status-pills"><label><input type="radio" name="jobStatusChoice" value="Da fare" onchange="s('j_status',this.value)"> 🕒 Da fare</label><label><input type="radio" name="jobStatusChoice" value="In lavorazione" onchange="s('j_status',this.value)"> 🔧 In lavorazione</label><label><input type="radio" name="jobStatusChoice" value="Completato" onchange="s('j_status',this.value)"> ✅ Completato</label></div><input type="hidden" id="j_status" value="Da fare"></div><div class="card"><div class="row"><strong>Ricambi</strong><button class="secondary" type="button" onclick="addPart()">+ Aggiungi</button></div><div class="field"><label>Ricambi frequenti — tocca per aggiungere</label><div class="actions" style="display:flex;flex-wrap:wrap;gap:7px"><button type="button" class="secondary" onclick="quickPart('Olio motore')">+ Olio motore</button><button type="button" class="secondary" onclick="quickPart('Filtro olio')">+ Filtro olio</button><button type="button" class="secondary" onclick="quickPart('Filtro aria')">+ Filtro aria</button><button type="button" class="secondary" onclick="quickPart('Pastiglie freni')">+ Pastiglie freni</button></div><small class="muted">Il prezzo è modificabile. Se hai già usato il ricambio, viene proposto l'ultimo prezzo salvato.</small></div><div id="parts"></div><datalist id="knownParts"></datalist></div><div class="card"><input id="j_tireRate" type="hidden" value="0"><strong>Ruote e pneumatici</strong><div class="field"><label>Servizio</label><div class="tire-options"><label><input type="radio" name="tireService" value="none" checked onchange="updateTireServiceRate()"> Nessuno</label><label><input type="radio" name="tireService" value="wheels" onchange="updateTireServiceRate()"> Sostituzione ruote</label><label><input type="radio" name="tireService" value="tires" onchange="updateTireServiceRate()"> Sostituzione pneumatici</label></div></div><div class="field"><label>Dimensione pneumatici</label><input id="j_tireSize" placeholder="225/45 R17"></div><div class="field"><label>Tipo</label><div class="tire-options"><label><input type="radio" name="tireSeason" value="" checked> — </label><label><input type="radio" name="tireSeason" value="W"> W</label><label><input type="radio" name="tireSeason" value="S"> S</label></div></div><div class="two"><div class="field"><label>VR (mm)</label><input id="j_tireVR" type="number" min="0" step="0.1" inputmode="decimal"></div><div class="field"><label>VL (mm)</label><input id="j_tireVL" type="number" min="0" step="0.1" inputmode="decimal"></div><div class="field"><label>HR (mm)</label><input id="j_tireHR" type="number" min="0" step="0.1" inputmode="decimal"></div><div class="field"><label>HL (mm)</label><input id="j_tireHL" type="number" min="0" step="0.1" inputmode="decimal"></div></div><div class="row"><span>Servizio ruote/pneumatici</span><strong id="tireCost">0,00 CHF</strong></div></div><div class="two"><div class="field"><label>Ore manodopera</label><input id="j_hours" type="number" min="0" step="0.25" value="0" oninput="calc()"></div><div class="field"><label>Tariffa oraria (CHF)</label><input id="j_rate" type="number" min="0" step="0.01" value="0" oninput="calc()"></div></div><div class="card"><div class="row"><span>Materiali</span><strong id="mats">0,00 CHF</strong></div><div class="row"><span>Manodopera</span><strong id="labor">0,00 CHF</strong></div><hr><div class="row"><strong>TOTALE</strong><span class="total" id="grand">0,00 CHF</span></div></div><div class="field"><label>Note</label><textarea id="j_notes"></textarea></div>
 <div class="card"><strong>💳 Pagamenti</strong><div class="field"><label>Stato pagamento</label><select id="j_payment"><option>Da pagare</option><option>Acconto</option><option>Pagato</option></select></div><div class="field"><label>Acconto ricevuto (CHF)</label><input id="j_deposit" type="number" min="0" step="0.01" value="0"></div></div>
 <div class="card"><strong>🔔 Prossima manutenzione</strong><div class="two"><div class="field"><label>Data promemoria</label><input id="j_nextService" type="date"></div><div class="field"><label>Km previsti</label><input id="j_nextKm" type="number" min="0"></div></div></div>
-<div class="card"><strong>📷 Foto intervento</strong><p class="muted">Massimo 2 foto ridotte per non riempire la memoria dell’iPhone.</p><input id="j_photoInput" type="file" accept="image/*" onchange="addJobPhoto(this)"><div id="j_photos"></div></div><button class="primary">Salva lavoro</button></form><div class="actions"><button class="secondary" onclick="goBack()">Home</button><button id="j_delete" class="secondary danger" onclick="delItem('jobs','j_id','jobs')">Elimina</button></div></section>
+<div class="card"><strong>📷 Foto intervento</strong><p class="muted">Massimo 2 foto ridotte per non riempire la memoria dell’iPhone.</p><input id="j_photoInput" type="file" accept="image/*" onchange="addJobPhoto(this)"><div id="j_photos"></div></div><button class="primary">Salva lavoro</button><button type="button" class="secondary" onclick="shareCurrentJobPdf()">↗ Condividi PDF lavoro</button></form><div class="actions"><button class="secondary" onclick="goBack()">Home</button><button id="j_delete" class="secondary danger" onclick="delItem('jobs','j_id','jobs')">Elimina</button></div></section>
 <section id="clientHistory"><h2 id="clientHistoryTitle">Storico cliente</h2><p class="muted" id="clientHistoryInfo"></p><div class="card"><strong>Contatta cliente</strong><div class="actions"><button class="secondary" onclick="contactClient('wa')">WhatsApp</button><button class="secondary" onclick="contactClient('mail')">Email</button></div><div class="field"><label>Messaggio</label><select id="contactTemplate"><option value="ready">Auto pronta</option><option value="appointment">Conferma appuntamento</option><option value="quote">Preventivo pronto</option><option value="service">Promemoria manutenzione</option></select></div><div class="field"><label>Email cliente (facoltativa)</label><input id="contactEmail" type="email" placeholder="cliente@esempio.ch"></div></div><div id="clientHistoryItems"></div></section>
 <section id="clients"><h2>Clienti e auto</h2><button class="primary" onclick="editClient()">+ Nuovo cliente</button><button type="button" class="secondary" style="margin:10px 0;width:100%" onclick="recoverClientsFromJobs()">↻ Recupera clienti dallo storico</button><div class="field" style="margin-top:14px"><label for="clientSearch">🔎 Cerca cliente, targa o auto</label><input id="clientSearch" type="search" placeholder="Nome, targa, modello, telefono..." oninput="renderClients()" autocomplete="off"></div><div id="clientItems"></div></section>
 <section id="clientEdit"><h2>Cliente e auto</h2><p class="hint" id="c_context" style="display:none"></p><form id="clientForm"><input id="c_id" type="hidden"><div class="field"><label>Cliente</label><input id="c_name" required></div><div class="field"><label>Telefono</label><input id="c_phone" type="tel"></div><div class="field"><label>Targa</label><input id="c_plate"></div><div class="field"><label>Marca e modello</label><input id="c_vehicle"></div><div class="field"><label>Numero di telaio (VIN)</label><input id="c_vin" maxlength="17" autocapitalize="characters" placeholder="17 caratteri"></div><div class="two"><div class="field"><label>Codice motore</label><input id="c_engine" autocapitalize="characters"></div><div class="field"><label>Potenza (kW)</label><input id="c_kw" type="number" min="0" step="0.01" inputmode="decimal"></div></div><div class="field"><label>Numero identificativo (altro)</label><input id="c_ident" placeholder="Es. numero documento o identificativo interno"></div><div class="field"><label>Note</label><textarea id="c_notes"></textarea></div><button class="primary" id="c_saveButton">Salva cliente e auto</button></form><div class="actions"><button class="secondary" onclick="goBack()">Home</button><button id="c_delete" class="secondary danger" onclick="delItem('clients','c_id','clients')">Elimina</button></div></section>
@@ -449,7 +448,7 @@ function renderApptJobPanel(apptId){
  panel.style.display=apptId?'block':'none';links.innerHTML='';
  if(!apptId)return;
  const jobs=db.jobs.filter(j=>j.appointmentId===apptId);
- button.textContent=jobs.length?'🔧 Crea un altro lavoro da appuntamento':'🔧 Crea lavoro da appuntamento';
+ button.textContent=jobs.length?'🔧 Apri lavoro collegato':'🔧 Avvia lavoro';
  if(jobs.length){
   const heading=document.createElement('p');heading.textContent='Lavori collegati:';links.appendChild(heading);
   for(const job of jobs){
@@ -464,12 +463,18 @@ function createJobFromAppt(){
  const appt=db.appointments.find(a=>a.id===v('a_id'));
  if(!appt)return alert('Salva prima l’appuntamento.');
  const linked=db.jobs.filter(j=>j.appointmentId===appt.id);
- if(linked.length&&!confirm('Questo appuntamento ha già un lavoro collegato. Vuoi crearne un altro?'))return;
+ if(linked.length){editJob(linked[0].id);return;}
  editJob();
  pendingAppointmentId=appt.id;s('j_appointmentId',appt.id);
  s('j_date',appt.date||today());s('j_time',appt.time||'');s('j_client',appt.client||'');
  s('j_plate',appt.plate||'');s('j_vehicle',appt.vehicle||'');
  s('j_desc',appt.desc||'');
+ const q=(db.quotes||[]).find(q=>q.id===appt.sourceQuoteId);
+ if(q){
+  $('parts').replaceChildren();
+  for(const m of (q.materials||[]))addPart({name:m.desc,qty:m.qty,price:m.price});
+  s('j_hours',q.hours||0);s('j_rate',q.rate||getRates().hour);calc();
+ }
  s('j_status','In lavorazione');
  let vehicle=appt.vehicleId?db.clients.find(c=>c.id===appt.vehicleId):null;
  if(!vehicle){
@@ -515,7 +520,7 @@ function renderAppts(){
  const active=db.appointments.filter(a=>!['Completato','Annullato'].includes(a.status)).length;
  $('agendaCount').textContent=active+' appuntamenti attivi in agenda (tutte le date)';
  $('agendaTodayCount').textContent=db.appointments.filter(a=>a.date===today()&&a.status!=='Completato').length+' appuntamenti oggi';
- let a=[...db.appointments].filter(a=>a.status!=='Completato').sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));$('appts').innerHTML=a.length?a.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editAppt(this.dataset.id)"><strong>${e(x.date)} ${e(x.time)} — ${e(x.client)}</strong>${e(x.plate)} · ${e(x.vehicle)}<br><span class="muted">${e(x.desc)} · ${e(x.status)}</span></button>`).join(''):'<p class="muted">Nessun appuntamento.</p>'}async function delItem(collection,input,page){if(!confirm('Eliminare questa scheda?'))return;db[collection]=db[collection].filter(x=>x.id!==v(input));if(await save())go(page)}function addPart(p={}){let d=document.createElement('div');d.className='part';d.innerHTML=`<div class="field"><label>Materiale / ricambio</label><input class="pn" list="knownParts" value="${e(p.name||'')}"></div><div class="two"><div class="field"><label>Quantità</label><input class="pq" type="number" min="0" step="0.01" value="${e(p.qty??1)}"></div><div class="field"><label>Prezzo unitario (CHF)</label><input class="pp" type="number" min="0" step="0.01" value="${e(p.price??0)}"></div></div><div class="row"><strong class="subtotal">0,00 CHF</strong><button type="button" class="secondary danger">Rimuovi</button></div>`;d.querySelectorAll('input').forEach(i=>i.oninput=calc);d.querySelector('button').onclick=()=>{d.remove();calc()};$('parts').appendChild(d);calc()}function quickPart(name){
+ let a=[...db.appointments].filter(a=>a.status!=='Completato').sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));$('appts').innerHTML=a.length?a.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editAppt(this.dataset.id)"><strong>${e(x.date)} ${e(x.time)} — ${e(x.client)}</strong>${e(x.plate)} · ${e(x.vehicle)}<br><span class="muted">${e(x.desc)} · ${e(x.status)}</span></button>`).join(''):'<p class="muted">Nessun appuntamento.</p>'}async function delItem(collection,input,page){if(!confirm('Eliminare questa scheda?'))return;db[collection]=db[collection].filter(x=>x.id!==v(input));if(await save())go(page)}function addPart(p={}){let d=document.createElement('div');d.className='part';d.innerHTML=`<div class="field"><label>Materiale / ricambio</label><input class="pn" list="knownParts" value="${e(p.name||'')}"></div><div class="two"><div class="field"><label>Quantità</label><input class="pq" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.qty??'')}"></div><div class="field"><label>Prezzo unitario (CHF)</label><input class="pp" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.price??'')}"></div></div><div class="row"><strong class="subtotal">0,00 CHF</strong><button type="button" class="secondary danger">Rimuovi</button></div>`;d.querySelectorAll('input').forEach(i=>i.oninput=calc);d.querySelector('button').onclick=()=>{d.remove();calc()};$('parts').appendChild(d);calc()}function quickPart(name){
  let price=0;
  for(const job of [...db.jobs].reverse()){
   const previous=(job.parts||[]).find(p=>(p.name||'').trim().toLowerCase()===name.toLowerCase());
@@ -625,11 +630,13 @@ async function recoverClientsFromJobs(){
 $('jobForm').onsubmit=async ev=>{ev.preventDefault();let x={};['id','date','client','plate','vehicle','vin','engine','kw','ident','km','desc','status','hours','rate','notes'].forEach(k=>x[k]=v('j_'+k).trim());x.id=x.id||id();x.time=v('j_time');x.plate=x.plate.toUpperCase();x.vin=x.vin.toUpperCase();x.engine=x.engine.toUpperCase();x.parts=getParts();x.tireSize=v('j_tireSize').trim();x.tireSeason=checkedValue('tireSeason');x.tireService=checkedValue('tireService')||'none';x.tireRate=Number(v('j_tireRate'))||0;x.tireDepth=Object.fromEntries(['VR','VL','HR','HL'].map(pos=>[pos,v('j_tire'+pos).trim()]));x.total=calc();let i=db.jobs.findIndex(a=>a.id===x.id);const oldJobs=db.jobs.slice(),oldClients=JSON.parse(JSON.stringify(db.clients));if(i<0&&(v('j_appointmentId')||pendingAppointmentId))x.appointmentId=v('j_appointmentId')||pendingAppointmentId;
 else if(i>=0&&db.jobs[i].appointmentId)x.appointmentId=db.jobs[i].appointmentId;
 const oldAppointments=db.appointments.map(a=>({...a}));
+const oldQuotes=JSON.parse(JSON.stringify(db.quotes||[]));
 const prior=i>=0?db.jobs[i]:{};
 if(i>=0&&isJobComplete(prior)&&otmCorrectionId!==x.id)return alert('Scheda completata: usa Rettifica dallo storico.');
 if(x.status==='Completato'&&!isJobComplete(prior)&&!confirm('Confermi la chiusura definitiva? Il lavoro passerà nello storico e sarà modificabile solo con Rettifica.'))return;
 if(otmCorrectionId===x.id){x.audit=[...(prior.audit||[]),{at:new Date().toISOString(),type:'Rettifica',before:JSON.parse(JSON.stringify(prior))}];otmCorrectionId='';}
 x.payment=v('j_payment');x.deposit=Number(v('j_deposit'))||0;x.photos=window.otmPhotos||prior.photos||[];x.nextService=v('j_nextService');x.nextKm=v('j_nextKm');
+if(i<0&&x.appointmentId){const source=db.appointments.find(a=>a.id===x.appointmentId)?.sourceQuoteId;if(source)x.sourceQuoteId=source;}
 if(i<0)db.jobs.push(x);else db.jobs[i]=x;
 mergeClientFromJob(x);
 if(!x.appointmentId){
@@ -639,6 +646,7 @@ if(!x.appointmentId){
  const appt=db.appointments.find(a=>a.id===x.appointmentId);
  if(appt){Object.assign(appt,{date:x.date,time:x.time,client:x.client,plate:x.plate,vehicle:x.vehicle,desc:x.desc,status:isJobComplete(x)?'Completato':'In lavorazione',jobId:x.id})}
 }
+if(x.sourceQuoteId)db.quotes=(db.quotes||[]).map(q=>q.id===x.sourceQuoteId?{...q,linkedJobId:x.id}:q);
 if(await save()){pendingAppointmentId='';go(isJobComplete(x)?'workHistory':'jobs')}
 else{db.jobs=oldJobs;db.clients=oldClients;db.appointments=oldAppointments;}};
 let otmHistoryJobId='',otmCorrectionId='';
@@ -792,7 +800,7 @@ function updateQuoteMaterialTotal(){
 }
 function dateToSwiss(d){const m=String(d||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?m[3]+'.'+m[2]+'.'+m[1]:String(d||'')}
 function swissToDate(d){const m=String(d||'').match(/^(\d{2})\.(\d{2})\.(\d{4})$/);if(!m)return '';const iso=m[3]+'-'+m[2]+'-'+m[1];const date=new Date(iso+'T12:00:00');return !Number.isNaN(date.getTime())&&date.getDate()===Number(m[1])&&date.getMonth()+1===Number(m[2])?iso:''}
-function newQuote(qid){const q=(db.quotes||[]).find(x=>x.id===qid)||{};$('quoteEditor').classList.remove('hide');for(const k of ['id','date','client','plate','desc','hours','rate','status','payment','deposit'])s('q_'+k,q[k]??(k==='date'?today():k==='rate'?getRates().hour:k==='status'?'Bozza':k==='payment'?'Non pagato':k==='deposit'?0:''));s('q_date',dateToSwiss(q.date||today()));populateQuoteClients(q.client||'',q.plate||'');$('q_materialRows').replaceChildren();if(Array.isArray(q.materials)&&q.materials.length){q.materials.forEach(addQuoteMaterial)}else if(Number(q.parts)>0){addQuoteMaterial({desc:'Ricambi e materiali (preventivo precedente)',qty:1,price:Number(q.parts)})}else addQuoteMaterial();$('q_delete').disabled=!q.id;$('q_convert').textContent=q.linkedJobId?'🔧 Apri scheda lavoro':'🔧 Trasforma in scheda lavoro';$('quoteEditor').scrollIntoView({behavior:'smooth'})}
+function newQuote(qid){const q=(db.quotes||[]).find(x=>x.id===qid)||{};$('quoteEditor').classList.remove('hide');for(const k of ['id','date','client','plate','desc','hours','rate','status','payment','deposit'])s('q_'+k,q[k]??(k==='date'?today():k==='rate'?getRates().hour:k==='status'?'Bozza':k==='payment'?'Non pagato':k==='deposit'?0:''));s('q_date',dateToSwiss(q.date||today()));populateQuoteClients(q.client||'',q.plate||'');$('q_materialRows').replaceChildren();if(Array.isArray(q.materials)&&q.materials.length){q.materials.forEach(addQuoteMaterial)}else if(Number(q.parts)>0){addQuoteMaterial({desc:'Ricambi e materiali (preventivo precedente)',qty:1,price:Number(q.parts)})}else addQuoteMaterial();$('q_delete').disabled=!q.id;$('q_convert').textContent=q.linkedAppointmentId?'📅 Apri appuntamento':'📅 Conferma e prenota';$('quoteEditor').scrollIntoView({behavior:'smooth'})}
 function quoteDraft(){return {id:v('q_id')||id(),date:swissToDate(v('q_date'))||today(),client:v('q_client').trim(),plate:v('q_plate').trim().toUpperCase(),desc:v('q_desc').trim(),materials:quoteMaterials(),parts:quoteMaterials().reduce((sum,m)=>sum+m.qty*m.price,0),hours:Number(v('q_hours'))||0,rate:Number(v('q_rate'))||0,vat:Number(db.vat)||0,status:v('q_status'),payment:v('q_payment'),deposit:Math.max(0,Number(v('q_deposit'))||0)}}
 async function saveQuote(){if(!swissToDate(v('q_date')))return alert('Inserisci una data valida nel formato gg.mm.aaaa.');const q=quoteDraft();if(!q.client||!q.desc)return alert('Inserisci cliente e descrizione.');if(q.materials.some(m=>!m.desc||m.qty<=0||m.price<0))return alert('Controlla descrizione, quantità e prezzo dei materiali.');const prior=(db.quotes||[]).find(x=>x.id===q.id);if(q.deposit>quoteTotal(q).total)return alert('Acconto superiore al totale.');db.quotes??=[];const old=[...db.quotes],i=db.quotes.findIndex(x=>x.id===q.id);if(i<0)db.quotes.push(q);else db.quotes[i]=q;if(await save()){s('q_id',q.id);renderQuotes();$('q_delete').disabled=false;alert('Preventivo salvato.')}else db.quotes=old}
 async function deleteQuote(){
@@ -807,45 +815,29 @@ async function deleteQuote(){
 }
 async function convertQuoteToJob(){
  const quoteId=v('q_id'),q=(db.quotes||[]).find(q=>q.id===quoteId);
- if(!q)return alert('Salva prima il preventivo. Poi potrai trasformarlo in scheda lavoro.');
- const existing=(db.jobs||[]).find(j=>j.sourceQuoteId===quoteId||j.id===q.linkedJobId);
- if(existing){
-  if(confirm('Questo preventivo ha già una scheda lavoro. Vuoi aprirla?')){closeQuote();editJob(existing.id)}
-  return;
- }
- if(!q.client||!q.plate)return alert('Per creare la scheda lavoro servono cliente e targa. Completa e salva il preventivo.');
- if(!confirm('Creare una scheda lavoro dal preventivo salvato? Il preventivo originale verrà conservato.'))return;
+ if(!q)return alert('Salva prima il preventivo, poi conferma e prenota.');
+ const existing=db.appointments.find(a=>a.id===q.linkedAppointmentId||a.sourceQuoteId===quoteId);
+ if(existing){closeQuote();editAppt(existing.id);return;}
+ if(!q.client||!q.plate)return alert('Per prenotare servono cliente e targa. Completa e salva il preventivo.');
  const chosenDate=prompt('Data appuntamento (AAAA-MM-GG):',today());
  if(chosenDate===null)return;
- if(!/^\d{4}-\d{2}-\d{2}$/.test(chosenDate)||Number.isNaN(new Date(chosenDate+'T12:00:00').getTime()))return alert('Inserisci una data valida nel formato AAAA-MM-GG.');
-
- const car=(db.clients||[]).find(c=>c.name===q.client&&normalizedPlate(c.plate)===normalizedPlate(q.plate))||{};
- const materials=Array.isArray(q.materials)&&q.materials.length
-   ?q.materials.map(m=>({name:m.desc,qty:Number(m.qty)||0,price:Number(m.price)||0}))
-   :(Number(q.parts)>0?[{name:'Materiali da preventivo',qty:1,price:Number(q.parts)}]:[]);
- const job={
-  id:id(),date:chosenDate,client:q.client,plate:q.plate,
-  vehicle:car.vehicle||'',vin:car.vin||'',engine:car.engine||'',kw:car.kw||'',ident:car.ident||'',
-  km:'',desc:q.desc||'',status:'Da fare',hours:Number(q.hours)||0,rate:Number(q.rate)||0,
-  notes:'Creato dal preventivo del '+(q.date||'')+'.',parts:materials,
-  tireSize:'',tireSeason:'',tireService:'none',tireRate:0,tireDepth:{},
-  total:materials.reduce((sum,m)=>sum+m.qty*m.price,0)+(Number(q.hours)||0)*(Number(q.rate)||0),
-  payment:q.payment==='Pagato'?'Pagato':q.payment==='Acconto'?'Acconto':'Da pagare',
-  deposit:Number(q.deposit)||0,photos:[],nextService:'',nextKm:'',sourceQuoteId:quoteId
- };
- const oldJobs=[...(db.jobs||[])],oldQuotes=[...(db.quotes||[])],oldAppointments=[...(db.appointments||[])];
- db.jobs.push(job);
- const appointment={id:id(),date:chosenDate,time:'',client:job.client,plate:job.plate,vehicle:job.vehicle,desc:job.desc,status:'Prenotato',jobId:job.id};
- db.appointments.push(appointment);job.appointmentId=appointment.id;
- db.quotes=db.quotes.map(item=>item.id===quoteId?{...item,linkedJobId:job.id,status:'Accettato'}:item);
- if(await save()){closeQuote();renderQuotes();editJob(job.id);alert('Scheda lavoro creata. Puoi completarla e salvarla.')}
- else{db.jobs=oldJobs;db.quotes=oldQuotes;db.appointments=oldAppointments}
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(chosenDate)||Number.isNaN(new Date(chosenDate+'T12:00:00').getTime()))return alert('Data non valida (AAAA-MM-GG).');
+ const chosenTime=prompt('Ora appuntamento (HH:MM):','09:00');
+ if(chosenTime===null)return;
+ if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(chosenTime))return alert('Orario non valido (HH:MM).');
+ const car=(db.clients||[]).find(c=>normalizeSearch(c.name)===normalizeSearch(q.client)&&normalizedPlate(c.plate)===normalizedPlate(q.plate))||{};
+ const appointment={id:id(),date:chosenDate,time:chosenTime,client:q.client,plate:q.plate,vehicle:car.vehicle||'',vehicleId:car.id||'',desc:q.desc,status:'Prenotato',sourceQuoteId:quoteId};
+ const oldAppointments=[...db.appointments],oldQuotes=[...(db.quotes||[])];
+ db.appointments.push(appointment);
+ db.quotes=db.quotes.map(item=>item.id===quoteId?{...item,linkedAppointmentId:appointment.id,status:'Accettato'}:item);
+ if(await save()){closeQuote();renderQuotes();editAppt(appointment.id);alert('Preventivo confermato: appuntamento creato con data e ora. Il lavoro si avvia dall’appuntamento.');}
+ else{db.appointments=oldAppointments;db.quotes=oldQuotes;}
 }
 function quoteTotal(q){const net=(Number(q.parts)||0)+(Number(q.hours)||0)*(Number(q.rate)||0);return {net,vat:net*q.vat/100,total:net*(1+q.vat/100)}}
 function renderQuotes(){const box=$('quoteItems');box.replaceChildren();for(const q of [...(db.quotes||[])].reverse()){const b=document.createElement('button');b.className='item';b.textContent=(q.date||'')+' · '+q.client+' · '+eur(quoteTotal(q).total)+' · '+(q.status||'Bozza')+' · '+(q.payment||'Non pagato')+(q.linkedJobId?' · 🔧 Scheda lavoro':'');b.onclick=()=>newQuote(q.id);box.append(b)}if(!(db.quotes||[]).length)box.textContent='Nessun preventivo.'}
 // Generatore PDF A4 offline: una pagina JPEG per foglio, senza servizi esterni.
 // La condivisione iOS riceve un vero application/pdf, non un file HTML.
-async function createQuotePdf(q,t,logoUrl){
+async function createQuotePdf(q,t,logoUrl,docType="PREVENTIVO"){
  const W=1240,H=1754,M=92,R=W-M,usable=R-M;
  const pages=[];let canvas,ctx,y;
  function page(){canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);y=M;}
@@ -862,7 +854,7 @@ async function createQuotePdf(q,t,logoUrl){
  try{const img=new Image();img.src=logoUrl;await new Promise((resolve)=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,1500)});if(img.complete&&img.naturalWidth)ctx.drawImage(img,M,y,125,125);}catch(_){}
  line('OTM GARAGE',M+155,y+55,52,true,'#0b4053');line('La tua officina, sempre con te',M+157,y+95,22,false,'#57717e');y+=160;
  ctx.fillStyle='#087f85';ctx.fillRect(M,y,usable,6);y+=55;
- block('PREVENTIVO',48,true,'#087f85',18);
+ block(docType,48,true,'#087f85',18);
  block('Cliente: '+q.client,27,true);block('Data: '+dateToSwiss(q.date||today())+'     Targa: '+(q.plate||'—'),25);rule();
  block('INTERVENTO PREVISTO',23,true,'#087f85');block(q.desc,25,false,'#152b3a',25);
  block('Stato: '+q.status+'     Pagamento: '+q.payment,22);block('Acconto: '+money(q.deposit),22);rule();
@@ -872,7 +864,7 @@ async function createQuotePdf(q,t,logoUrl){
  item('Manodopera ('+q.hours+' ore × '+money(q.rate)+')',q.hours*q.rate);
  item('Subtotale',t.net);item('IVA ('+q.vat+'%)',t.vat);
  ensure(95);line('TOTALE',M,y+48,35,true,'#087f85');font(35,true);const total=money(t.total);line(total,R-ctx.measureText(total).width,y+48,35,true,'#087f85');y+=95;rule();
- block('Preventivo indicativo, salvo conferma.',20,false,'#657b86');
+ block(docType==='PREVENTIVO'?'Preventivo indicativo, salvo conferma.':'Scheda intervento OTM Garage.',20,false,'#657b86');
  finish();
  const encoder=new TextEncoder();const chunks=[];let length=0;const offsets=[0];
  function push(bytes){if(typeof bytes==='string')bytes=encoder.encode(bytes);chunks.push(bytes);length+=bytes.length;}
@@ -891,10 +883,10 @@ async function createQuotePdf(q,t,logoUrl){
  push('trailer\n<< /Size '+(3+n*3)+' /Root 1 0 R >>\nstartxref\n'+start+'\n%%EOF');
  return new Blob(chunks,{type:'application/pdf'});
 }
-function printQuote(){
- const q=quoteDraft();
+function printQuote(qOverride=null,docType="PREVENTIVO"){
+ const q=qOverride||quoteDraft();
  if(!q.client||!q.desc)return alert('Compila prima cliente e descrizione.');
- if(!swissToDate(v('q_date')))return alert('Inserisci una data valida nel formato gg.mm.aaaa.');
+ if(!qOverride&&!swissToDate(v('q_date')))return alert('Inserisci una data valida nel formato gg.mm.aaaa.');
  const t=quoteTotal(q);
  const logo=new URL('otm-logo.png',location.href).href;
  const printable='<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Preventivo OTM Garage</title><style>'+
@@ -904,13 +896,13 @@ function printQuote(){
  'table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#e9f4f4;color:#1d4e58;text-align:left;font-size:9pt;text-transform:uppercase}th,td{padding:12px 10px;border-bottom:1px solid #d9e4e7}td:last-child,th:last-child{text-align:right}.total td{font-size:15pt;font-weight:900;color:#087f85;border-top:2px solid #087f85}.foot{margin-top:40px;padding-top:14px;border-top:1px solid #d9e4e7;color:#657b86;font-size:9pt}'+
  '.print-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;background:#10283a;color:white;padding:12px 16px;font:600 14px Arial,sans-serif}.print-tools button{border:1px solid #64cfcf;background:#1fdddd;color:#072c36;padding:12px 18px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}.print-tools button.back{background:transparent;color:#e8ffff}.print-tools .note{font-size:11px;color:#c0e1e6}'+
  '@media screen{body{background:#e6edf0;padding:0 10px 24px}.sheet{background:white;width:100%;max-width:210mm;min-height:297mm;padding:clamp(12px,4vw,15mm);margin:12px auto;box-shadow:0 8px 35px #0002}table{table-layout:fixed}td,th{overflow-wrap:anywhere}}@media print{.print-tools{display:none!important}.sheet{max-width:none;min-height:0;padding:0}tr{break-inside:avoid}body{background:white!important}}'+
- '</style></head><body><nav class="print-tools"><button type="button" class="back" onclick="window.close()">← Torna all’app</button><span class="note">Stampa o salva PDF</span><button type="button" onclick="window.print()">🖨 Stampa A4</button></nav><p id="returnHelp" hidden style="padding:12px;text-align:center;color:#153e50">Se la finestra non si chiude, usa il pulsante schede di Safari e torna a OTM Garage.</p><main class="sheet"><header class="head"><img class="logo" src="'+logo+'" alt="Logo OTM Garage"><div><div class="brand">OTM GARAGE</div><div class="tag">La tua officina, sempre con te</div></div></header><h1>PREVENTIVO</h1>'+
+ '</style></head><body><nav class="print-tools"><button type="button" class="back" onclick="window.close()">← Torna all’app</button><span class="note">Stampa o salva PDF</span><button type="button" onclick="window.print()">🖨 Stampa A4</button></nav><p id="returnHelp" hidden style="padding:12px;text-align:center;color:#153e50">Se la finestra non si chiude, usa il pulsante schede di Safari e torna a OTM Garage.</p><main class="sheet"><header class="head"><img class="logo" src="'+logo+'" alt="Logo OTM Garage"><div><div class="brand">OTM GARAGE</div><div class="tag">La tua officina, sempre con te</div></div></header><h1>'+e(docType)+'</h1>'+
  '<div class="meta"><div><div class="lab">Cliente</div><strong>'+e(q.client)+'</strong></div><div><div class="lab">Data e targa</div><strong>'+e(dateToSwiss(q.date||today()))+'</strong><div>'+e(q.plate||'—')+'</div></div></div>'+
  '<div class="lab">Intervento previsto</div><div class="description">'+e(q.desc)+'</div><p><strong>Stato:</strong> '+e(q.status)+' · <strong>Pagamento:</strong> '+e(q.payment)+' · <strong>Acconto:</strong> '+eur(q.deposit)+'</p>'+
  '<table><thead><tr><th>Descrizione</th><th>Importo CHF</th></tr></thead><tbody>'+
  ((q.materials||[]).length?q.materials.map(m=>'<tr><td>'+e(m.desc)+' ('+e(m.qty)+' × '+eur(m.price)+')</td><td>'+eur(m.qty*m.price)+'</td></tr>').join(''):'<tr><td>Ricambi e materiali</td><td>'+eur(q.parts)+'</td></tr>')+'<tr><td>Manodopera ('+e(q.hours)+' ore × '+eur(q.rate)+')</td><td>'+eur(q.hours*q.rate)+'</td></tr>'+
  '<tr><td>Subtotale</td><td>'+eur(t.net)+'</td></tr><tr><td>IVA ('+e(q.vat)+'%)</td><td>'+eur(t.vat)+'</td></tr><tr class="total"><td>TOTALE</td><td>'+eur(t.total)+'</td></tr></tbody></table>'+
- '<div class="foot">Preventivo indicativo, salvo conferma. Documento predisposto per stampa o salvataggio PDF in formato A4 verticale.</div></main></body></html>';
+ '<div class="foot">Documento OTM Garage. Documento predisposto per stampa o salvataggio PDF in formato A4 verticale.</div></main></body></html>';
  // Anteprima A4 nella stessa scheda: evita popup bloccati da Safari.
  let overlay=document.getElementById('otmA4Overlay');
  if(!overlay){
@@ -922,16 +914,16 @@ function printQuote(){
  const parsed=new DOMParser().parseFromString(printable,'text/html');
  overlay.replaceChildren();
  const toolbar=document.createElement('nav');toolbar.className='a4bar';
- const back=document.createElement('button');back.textContent='← Torna al preventivo';back.onclick=()=>{overlay.hidden=true;overlay.style.display='none'};
+ const back=document.createElement('button');back.textContent='← Indietro';back.onclick=()=>{overlay.hidden=true;overlay.style.display='none'};
  const shareDoc=document.createElement('button');shareDoc.textContent='↗ Condividi PDF';
  shareDoc.onclick=async()=>{
   shareDoc.disabled=true;shareDoc.textContent='Preparazione PDF…';
   try{
-   const pdf=await createQuotePdf(q,t,logo);
-   const filename='OTM-Preventivo-'+(q.date||today())+'.pdf';
+   const pdf=await createQuotePdf(q,t,logo,docType);
+   const filename='OTM-'+(docType==='PREVENTIVO'?'Preventivo':'Lavoro')+'-'+(q.date||today())+'.pdf';
    const file=new File([pdf],filename,{type:'application/pdf'});
    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
-    try{await navigator.share({files:[file],title:'Preventivo OTM Garage'});return;}
+    try{await navigator.share({files:[file],title:docType==='PREVENTIVO'?'Preventivo OTM Garage':'Lavoro OTM Garage'});return;}
     catch(err){if(err && err.name==='AbortError')return;}
    }
    const url=URL.createObjectURL(pdf);const a=document.createElement('a');a.href=url;a.download=filename;
@@ -943,6 +935,18 @@ function printQuote(){
  toolbar.append(back,shareDoc);overlay.append(toolbar,parsed.querySelector('.sheet'));
  overlay.hidden=false;overlay.style.display='block';overlay.scrollTop=0;
 
+}
+function jobAsPdfData(j){
+ const parts=(j.parts||[]).map(p=>({desc:p.name||'',qty:Number(p.qty)||0,price:Number(p.price)||0}));
+ const tire=Number(j.tireRate)||0;
+ if(tire>0)parts.push({desc:'Servizio ruote / pneumatici',qty:1,price:tire});
+ return {date:j.date||today(),client:j.client||'',plate:j.plate||'',desc:(j.desc||'')+(j.vehicle?'\nVeicolo: '+j.vehicle:'')+(j.km?'\nKm: '+j.km:'')+(j.notes?'\nNote: '+j.notes:''),materials:parts,parts:parts.reduce((a,p)=>a+p.qty*p.price,0),hours:Number(j.hours)||0,rate:Number(j.rate)||0,vat:0,status:j.status||'Da fare',payment:j.payment||'Da pagare',deposit:Number(j.deposit)||0};
+}
+function shareHistoryJobPdf(){const j=db.jobs.find(x=>x.id===otmHistoryJobId);if(j)printQuote(jobAsPdfData(j),'LAVORO');}
+function shareCurrentJobPdf(){
+ const j={date:v('j_date'),client:v('j_client'),plate:v('j_plate'),vehicle:v('j_vehicle'),desc:v('j_desc'),km:v('j_km'),notes:v('j_notes'),parts:getParts(),hours:v('j_hours'),rate:v('j_rate'),status:v('j_status'),payment:v('j_payment'),deposit:v('j_deposit'),tireRate:tireCharge()};
+ if(!j.client||!j.desc)return alert('Inserisci cliente e intervento prima di condividere.');
+ printQuote(jobAsPdfData(j),'LAVORO');
 }
 function reminderMessage(j,kind){
  const name=j.client||'cliente',plate=j.plate?' ('+j.plate+')':'';
