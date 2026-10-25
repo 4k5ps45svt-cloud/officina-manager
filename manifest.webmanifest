@@ -9,16 +9,16 @@
   "lang": "it",
   "icons": [
     {
-      "src": "otm-icon-192.png",
+      "src": "otm-app-192-v44.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "otm-icon-512.png",
+      "src": "otm-app-512-v44.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
