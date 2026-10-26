@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230"><path d="M92 87 C171 18 273 24 362 27 C472 24 554 32 631 89 C553 60 469 57 362 57 C244 55 169 62 92 87Z" fill="#39dcd6"/><text x="360" y="163" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="128" font-weight="900" letter-spacing="10" fill="#f1fbfc">OTM</text><path d="M170 190H247M475 190H552" stroke="#39dcd6" stroke-width="7"/><text x="360" y="204" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="39" font-weight="bold" letter-spacing="17" fill="#e9f6f7">GARAGE</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="OTM Garage, logo sportivo argento">
+<defs>
+<linearGradient id="metal" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#d7e1e8"/><stop offset=".6" stop-color="#8294a4"/><stop offset=".83" stop-color="#f1f6fa"/><stop offset="1" stop-color="#9faebb"/></linearGradient>
+<linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#7e929e"/><stop offset=".5" stop-color="#f9fcff"/><stop offset="1" stop-color="#7e929e"/></linearGradient>
+</defs>
+<path d="M79 95 C145 62 190 35 254 29 C314 21 403 22 465 28 C541 35 594 66 642 95 C581 78 540 75 489 74 C452 58 416 53 355 53 C294 53 245 57 207 74 C163 75 116 82 79 95Z" fill="url(#metal)"/>
+<path d="M130 102 C204 87 276 83 359 83 C443 83 524 88 593 102" stroke="url(#accent)" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="360" y="170" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="118" font-weight="900" font-style="italic" letter-spacing="8" fill="url(#metal)">OTM</text>
+<path d="M165 194H260M462 194H557" stroke="url(#accent)" stroke-width="5" stroke-linecap="round"/>
+<text x="360" y="205" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="35" font-weight="bold" letter-spacing="16" fill="url(#metal)">GARAGE</text>
+</svg>
