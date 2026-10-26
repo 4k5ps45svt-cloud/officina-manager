@@ -188,13 +188,13 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 <p id="lockError" role="alert"></p>
 <p>La password non viene inviata a un server. I dati sono cifrati su questo dispositivo.</p></div></div><header><div class="otm-header"><img src="otm-logo.png" alt="Logo OTM Garage"><div><h1>OTM Garage</h1><small>OFFICINA MANAGER · SVIZZERA</small></div></div></header><main class="wrap"><nav id="otmNav" aria-label="Navigazione" style="display:none"><button type="button" id="backNav" onclick="goBack()" aria-label="Torna alla pagina precedente"><span class="back-arrow" aria-hidden="true">←</span> Indietro</button><button type="button" id="homeNav" onclick="go('home')" aria-label="Torna alla Home">⌂ Home</button></nav>
 <section id="home" class="active">
-<div class="dash-head otm-home-brand"><img class="otm-dash-logo" src="otm-logo.png" alt="Logo ufficiale OTM Garage"><div><div class="dash-eyebrow">OTM GARAGE</div><h2>La tua officina</h2><p id="dashDate" class="muted"></p></div></div>
+<div class="dash-head otm-home-brand"><div><p id="dashDate" class="muted"></p></div></div>
 <div class="dash-section-title"><h3>Nuovo in officina</h3></div>
 <div class="dash-actions">
 <button type="button" class="dash-action dash-action-primary" onclick="editAppt()"><span class="dash-action-icon">＋</span><span>Nuovo appuntamento<small>Organizza il prossimo intervento</small></span><span class="dash-arrow">›</span></button>
 <button type="button" class="dash-action" onclick="go('quotes');newQuote()"><span class="dash-action-icon">▤</span><span>Nuovo preventivo<small>Cliente, auto, importi e PDF A4</small></span><span class="dash-arrow">›</span></button>
 </div>
-<div class="card" style="margin-bottom:12px"><strong id="otmAllAgendaCount">0 lavori attivi in agenda · tutte le date</strong></div><div class="dash-stats"><button type="button" class="dash-stat" onclick="go('agenda')"><span class="dash-stat-label">OGGI</span><strong id="dashToday">0</strong><small>Appuntamenti</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">IN OFFICINA</span><strong id="dashProgress">0</strong><small>Lavori in corso</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">COMPLETATI</span><strong id="dashDone">0</strong><small>Lavori</small></button></div>
+<button type="button" class="card" style="margin-bottom:12px;width:100%;text-align:left;color:inherit;cursor:pointer" onclick="go('activeAppointments')"><strong id="otmAllAgendaCount">0 appuntamenti attivi in agenda · tutte le date</strong><small class="muted">Tocca per vedere gli appuntamenti attivi ›</small></button><div class="dash-stats"><button type="button" class="dash-stat" onclick="go('agenda')"><span class="dash-stat-label">OGGI</span><strong id="dashToday">0</strong><small>Appuntamenti</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">IN OFFICINA</span><strong id="dashProgress">0</strong><small>Lavori in corso</small></button><button type="button" class="dash-stat" onclick="go('jobs')"><span class="dash-stat-label">COMPLETATI</span><strong id="dashDone">0</strong><small>Lavori</small></button></div>
 <div class="dash-section-title"><h3>Menu officina</h3></div>
 <div class="dash-shortcuts otm-sport-grid">
 <button type="button" onclick="go('clients')"><span>♙</span>Clienti e auto <b>›</b></button>
@@ -203,12 +203,14 @@ body{background:radial-gradient(ellipse 600px 400px at 50% -80px,#17495a 0%,#0c1
 <button type="button" onclick="go('quotes')"><span>▤</span>Preventivi <b>›</b></button>
 <button type="button" onclick="go('reminders')"><span>◷</span>Promemoria <b>›</b></button>
 <button type="button" onclick="go('stats')"><span>▥</span>Statistiche <b>›</b></button>
+<button type="button" onclick="go('settings')"><span>⚙</span>Impostazioni <b>›</b></button>
 </div>
 <div class="dash-section-title"><h3>Agenda di oggi</h3><button type="button" class="dash-text-link" onclick="go('agenda')">Vedi tutti ›</button></div><div id="dashAgenda" class="dash-agenda"></div>
 <p class="dash-backup">🔒 I dati sono conservati sul dispositivo. Ricorda di effettuare periodicamente un backup.</p>
 </section>
+<section id="activeAppointments"><h2>Appuntamenti attivi</h2><p class="muted">Prenotati e in lavorazione, di tutte le date.</p><div id="activeApptItems"></div></section>
 <section id="agenda"><h2>Appuntamenti</h2><div class="card"><strong id="agendaCount">0 lavori in agenda</strong><p class="muted" id="agendaTodayCount">0 appuntamenti oggi</p></div><button class="primary" onclick="editAppt()">+ Nuovo appuntamento</button><div id="appts"></div></section>
-<section id="apptEdit"><h2>Appuntamento</h2><form id="apptForm"><input id="a_id" type="hidden"><div class="two"><div class="field"><label>Data</label><input id="a_date" type="date" required></div><div class="field"><label>Ora</label><input id="a_time" type="time" required></div></div><div class="field"><label>Cliente</label><input id="a_client" required autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Targa</label><input id="a_plate" autocapitalize="characters" autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Auto</label><input id="a_vehicle" oninput="clearApptSelection()"></div><div class="actions"><button type="button" class="secondary" onclick="addAnotherApptCar()">➕ Aggiungi un’altra auto al cliente</button></div><p id="a_customerHint" class="muted" aria-live="polite"></p><input id="a_vehicleId" type="hidden"><div class="field"><label>Seleziona il veicolo dall’archivio</label><div id="a_matches" class="card" style="display:none"></div><small class="muted" id="a_matchHelp">Cerca per nome o targa. Se ci sono più veicoli, scegli quello giusto.</small></div><p class="hint" id="a_saveClientHelp">Quando premi «Salva appuntamento», se il cliente o l’auto non sono ancora registrati, ti chiederò se vuoi aggiungerli all’archivio. Se sono già registrati, non creerò doppioni.</p><div class="field"><label>Intervento previsto</label><textarea id="a_desc"></textarea></div><div class="field"><label>Stato</label><select id="a_status"><option>Prenotato</option><option>In lavorazione</option><option>Completato</option><option>Annullato</option></select></div><button class="primary">Salva appuntamento</button></form><div class="card" id="a_jobPanel" style="display:none"><button type="button" class="primary" id="a_createJob" onclick="createJobFromAppt()">🔧 Avvia lavoro</button><div id="a_linkedJobs" class="muted"></div><small class="muted">Lo stato passa a “In lavorazione” soltanto quando salvi il lavoro.</small></div><div class="actions"><button class="secondary" onclick="goBack()">← Indietro</button><button id="a_delete" class="secondary danger" onclick="delItem('appointments','a_id','agenda')">Elimina</button></div></section>
+<section id="apptEdit"><h2>Appuntamento</h2><form id="apptForm"><input id="a_id" type="hidden"><div class="two"><div class="field"><label>Data</label><input id="a_date" type="date" required></div><div class="field"><label>Ora</label><input id="a_time" type="time" required></div></div><div class="field"><label>Cliente</label><input id="a_client" required autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Targa</label><input id="a_plate" autocapitalize="characters" autocomplete="off" oninput="searchApptVehicles()"></div><div class="field"><label>Auto</label><input id="a_vehicle" oninput="clearApptSelection()"></div><div class="actions"><button type="button" class="secondary" onclick="addAnotherApptCar()">➕ Aggiungi un’altra auto al cliente</button></div><p id="a_customerHint" class="muted" aria-live="polite"></p><input id="a_vehicleId" type="hidden"><div class="field"><label>Seleziona il veicolo dall’archivio</label><div id="a_matches" class="card" style="display:none"></div><small class="muted" id="a_matchHelp">Cerca per nome o targa. Se ci sono più veicoli, scegli quello giusto.</small></div><p class="hint" id="a_saveClientHelp">Quando premi «Salva appuntamento», se il cliente o l’auto non sono ancora registrati, ti chiederò se vuoi aggiungerli all’archivio. Se sono già registrati, non creerò doppioni.</p><div class="field"><label>Intervento previsto</label><textarea id="a_desc"></textarea></div><div class="field"><label>Stato</label><select id="a_status"><option>Prenotato</option><option>In lavorazione</option><option>Completato</option><option>Annullato</option></select></div><button class="primary">Salva appuntamento</button></form><div class="card" id="apptContactPanel" style="display:none"><strong>Conferma e promemoria appuntamento</strong><p class="muted">Controlla il messaggio prima di inviarlo. Nessun invio automatico.</p><div class="actions"><button type="button" class="secondary" onclick="sendAppointmentMessage('wa',false)">Conferma WhatsApp</button><button type="button" class="secondary" onclick="sendAppointmentMessage('email',false)">Conferma email</button><button type="button" class="secondary" onclick="sendAppointmentMessage('wa',true)">Promemoria WhatsApp</button><button type="button" class="secondary" onclick="sendAppointmentMessage('email',true)">Promemoria email</button></div></div><div class="card" id="a_jobPanel" style="display:none"><button type="button" class="primary" id="a_createJob" onclick="createJobFromAppt()">🔧 Avvia lavoro</button><div id="a_linkedJobs" class="muted"></div><small class="muted">Lo stato passa a “In lavorazione” soltanto quando salvi il lavoro.</small></div><div class="actions"><button class="secondary" onclick="goBack()">← Indietro</button><button id="a_delete" class="secondary danger" onclick="delItem('appointments','a_id','agenda')">Elimina</button></div></section>
 <section id="jobs"><h2>Lavori attivi</h2><div class="card"><strong id="jobsAgendaCount">0 appuntamenti in agenda</strong><div id="jobsAgendaItems"></div></div><button type="button" class="secondary" onclick="go('workHistory')">📚 Storico lavori completati</button><div class="field" style="margin-top:14px"><label>Cerca targa, cliente o lavoro</label><input id="search" placeholder="Cerca..." oninput="renderJobs()"></div><div id="jobItems"></div></section>
 <section id="workHistory"><h2>Storico lavori completati</h2><div class="field"><label>Cerca per cliente, targa, auto o intervento</label><input id="historySearch" type="search" oninput="renderWorkHistory()" placeholder="Nome, targa, marca, modello..."></div><div id="historyItems"></div></section><section id="jobRead"><h2>Intervento completato</h2><div id="jobReadDetails" class="card"></div><div class="actions"><button class="primary" onclick="shareHistoryJobPdf()">↗ Condividi PDF intervento</button><button class="secondary" onclick="requestJobCorrection()">✏️ Rettifica</button><button class="secondary" onclick="go('home')">Home</button></div></section><section id="jobEdit"><h2>Scheda lavoro</h2>
 <div class="card"><strong>⚡ Compilazione rapida</strong><p class="muted">Scrivi una targa già registrata per recuperare cliente e veicolo. Puoi anche duplicare un vecchio lavoro.</p>
@@ -409,7 +411,7 @@ function go(page,fromBack=false){
  }
  if(page==='home'){renderDashboard();otmBackupNotice();}
  document.querySelectorAll('main section').forEach(x=>x.classList.toggle('active',x.id===page));
- if(page==='quotes')renderQuotes();if(page==='reminders')renderReminders();if(page==='stats')renderStats();if(page==='agenda')renderAppts();if(page==='jobs')renderJobs();if(page==='workHistory')renderWorkHistory();if(page==='clients')renderClients();if(page==='clientHistory')renderClientHistory();if(page==='settings'){showRates();showAutoStatus()}
+ if(page==='activeAppointments')renderActiveAppointments();if(page==='quotes')renderQuotes();if(page==='reminders')renderReminders();if(page==='stats')renderStats();if(page==='agenda')renderAppts();if(page==='jobs')renderJobs();if(page==='workHistory')renderWorkHistory();if(page==='clients')renderClients();if(page==='clientHistory')renderClientHistory();if(page==='settings'){showRates();showAutoStatus()}
  $('otmNav').style.display=page==='home'?'none':'flex';
  scrollTo(0,0);
 }function renderDashboard(){
@@ -510,13 +512,13 @@ function editAppt(xid){let x=db.appointments.find(a=>a.id===xid)||{};
  ['id','date','time','client','plate','vehicle','desc','status'].forEach(k=>s('a_'+k,x[k]??(k==='date'?today():k==='status'?'Prenotato':'')));
  s('a_vehicleId',x.vehicleId||'');$('a_customerHint').textContent='';$('a_matches').innerHTML='';$('a_matches').style.display='none';
  $('a_matchHelp').textContent=x.vehicleId?'Veicolo collegato all’archivio.':'Cerca per nome o targa. Se ci sono più veicoli, scegli quello giusto.';
- $('a_delete').classList.toggle('hide',!x.id);renderApptJobPanel(x.id);go('apptEdit')}
+ $('a_delete').classList.toggle('hide',!x.id);$('apptContactPanel').style.display=x.id?'block':'none';renderApptJobPanel(x.id);go('apptEdit')}
 let pendingAppointmentDraft=null;
 function appointmentDraft(){let x={};['id','date','time','client','plate','vehicle','desc','status','vehicleId'].forEach(k=>x[k]=v('a_'+k).trim());x.id=x.id||id();x.plate=x.plate.toUpperCase();return x}
 async function persistAppointment(x){
  const before=db.appointments.map(a=>({...a}));
  const i=db.appointments.findIndex(a=>a.id===x.id);if(i<0)db.appointments.push(x);else db.appointments[i]=x;
- if(await save()){go('agenda');return true}db.appointments=before;return false;
+ if(await save()){editAppt(x.id);return true}db.appointments=before;return false;
 }
 $('apptForm').onsubmit=async ev=>{
  ev.preventDefault();const x=appointmentDraft();
@@ -985,6 +987,27 @@ function shareCurrentJobPdf(){
  const j={date:v('j_date'),client:v('j_client'),plate:v('j_plate'),vehicle:v('j_vehicle'),desc:v('j_desc'),km:v('j_km'),notes:v('j_notes'),parts:getParts(),hours:v('j_hours'),rate:v('j_rate'),status:v('j_status'),payment:v('j_payment'),deposit:v('j_deposit'),tireRate:tireCharge()};
  if(!j.client||!j.desc)return alert('Inserisci cliente e intervento prima di condividere.');
  printQuote(jobAsPdfData(j),'LAVORO');
+}
+function renderActiveAppointments(){
+ const box=$('activeApptItems');if(!box)return;
+ const a=db.appointments.filter(x=>!['Completato','Annullato'].includes(x.status)).sort((x,y)=>(x.date+' '+(x.time||'')).localeCompare(y.date+' '+(y.time||'')));
+ box.innerHTML=a.length?a.map(x=>`<button type="button" class="item" data-id="${e(x.id)}" onclick="editAppt(this.dataset.id)"><strong>${e(dateToSwiss(x.date))} · ${e(x.time||'--:--')} · ${e(x.client||'')}</strong><div>${e(x.plate||'')} · ${e(x.desc||'')}</div><small>${e(x.status||'Prenotato')}</small></button>`).join(''):'<p class="muted">Nessun appuntamento attivo.</p>';
+}
+function sendAppointmentMessage(kind,isReminder){
+ const a=db.appointments.find(x=>x.id===v('a_id'));if(!a)return alert('Salva prima l’appuntamento.');
+ const d=dateToSwiss(a.date),name=a.client||'cliente';
+ const intro=isReminder?'le ricordiamo il suo appuntamento':'le confermiamo il suo appuntamento';
+ const msg='Buongiorno '+name+', '+intro+' presso OTM Garage per il '+d+' alle ore '+(a.time||'--:--')+'\nVeicolo: '+(a.vehicle||'—')+(a.plate?' · Targa: '+a.plate:'')+'\nIntervento: '+(a.desc||'da definire')+'\n\nGrazie, OTM Garage';
+ const related=db.clients.find(c=>a.vehicleId&&c.id===a.vehicleId)||db.clients.find(c=>normalizeSearch(c.name)===normalizeSearch(name)&&(!a.plate||normalizedPlate(c.plate)===normalizedPlate(a.plate)))||db.clients.find(c=>normalizeSearch(c.name)===normalizeSearch(name));
+ if(kind==='wa'){
+  const phone=String(related?.phone||'').replace(/\D/g,'');
+  if(!phone)return alert('Numero del cliente non presente. Inseriscilo nella scheda cliente.');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
+ }else{
+  const address=related?.email||prompt('Indirizzo email del cliente (non viene salvato):','');
+  if(!address)return;
+  location.href='mailto:'+encodeURIComponent(address)+'?subject='+encodeURIComponent((isReminder?'Promemoria':'Conferma')+' appuntamento OTM Garage')+'&body='+encodeURIComponent(msg);
+ }
 }
 function reminderMessage(j,kind){
  const name=j.client||'cliente',plate=j.plate?' ('+j.plate+')':'';
