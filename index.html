@@ -599,8 +599,31 @@ $('apptForm').onsubmit=async ev=>{
 function renderAppts(){
  const active=db.appointments.filter(a=>!['Completato','Annullato'].includes(a.status)).length;
  $('agendaCount').textContent=active+' appuntamenti attivi in agenda (tutte le date)';
- $('agendaTodayCount').textContent=db.appointments.filter(a=>a.date===today()&&a.status!=='Completato').length+' appuntamenti oggi';
- let a=[...db.appointments].filter(a=>a.status!=='Completato').sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));$('appts').innerHTML=a.length?a.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editAppt(this.dataset.id)"><strong>${e(x.date)} ${e(x.time)} — ${e(x.client)}</strong>${e(x.plate)} · ${e(x.vehicle)}<br><span class="muted">${e(x.desc)} · ${e(x.status)}</span></button>`).join(''):'<p class="muted">Nessun appuntamento.</p>'}async function delItem(collection,input,page){if(!confirm('Eliminare questa scheda?'))return;db[collection]=db[collection].filter(x=>x.id!==v(input));if(await save())go(page)}function addPart(p={}){let d=document.createElement('div');d.className='part';d.innerHTML=`<div class="field"><label>Materiale / ricambio</label><input class="pn" list="knownParts" value="${e(p.name||'')}"></div><div class="two"><div class="field"><label>Quantità</label><input class="pq" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.qty??'')}"></div><div class="field"><label>Prezzo unitario (CHF)</label><input class="pp" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.price??'')}"></div></div><div class="row"><strong class="subtotal">0,00 CHF</strong><button type="button" class="secondary danger">Rimuovi</button></div>`;d.querySelectorAll('input').forEach(i=>i.oninput=calc);d.querySelector('button').onclick=()=>{d.remove();calc()};$('parts').appendChild(d);calc()}function quickPart(name){
+ $('agendaTodayCount').textContent=db.appointments.filter(a=>a.date===today()&&!['Completato','Annullato'].includes(a.status)).length+' appuntamenti oggi';
+ let a=[...db.appointments].filter(a=>!['Completato','Annullato'].includes(a.status)).sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));$('appts').innerHTML=a.length?a.map(x=>`<button class="item" data-id="${e(x.id)}" onclick="editAppt(this.dataset.id)"><strong>${e(x.date)} ${e(x.time)} — ${e(x.client)}</strong>${e(x.plate)} · ${e(x.vehicle)}<br><span class="muted">${e(x.desc)} · ${e(x.status)}</span></button>`).join(''):'<p class="muted">Nessun appuntamento.</p>'}async function delItem(collection,input,page){
+ const targetId=v(input);if(!targetId)return;
+ const target=(db[collection]||[]).find(x=>x.id===targetId);if(!target)return;
+ const linkedJobIds=new Set(),linkedApptIds=new Set();
+ if(collection==='jobs'&&target.appointmentId)linkedApptIds.add(target.appointmentId);
+ if(collection==='appointments'){
+  linkedApptIds.add(target.id);
+  db.jobs.filter(j=>j.appointmentId===target.id||j.id===target.jobId).forEach(j=>linkedJobIds.add(j.id));
+ }
+ if(collection==='quotes'){
+  db.appointments.filter(a=>a.sourceQuoteId===target.id||a.id===target.linkedAppointmentId).forEach(a=>linkedApptIds.add(a.id));
+  db.jobs.filter(j=>j.sourceQuoteId===target.id||j.id===target.linkedJobId).forEach(j=>linkedJobIds.add(j.id));
+ }
+ const related=(linkedJobIds.size||linkedApptIds.size)?' Verranno eliminati anche gli appuntamenti e i lavori collegati.':'';
+ if(!confirm('Eliminare questa scheda?'+related))return;
+ const before={jobs:[...db.jobs],appointments:[...db.appointments],quotes:[...(db.quotes||[])]};
+ db[collection]=db[collection].filter(x=>x.id!==targetId);
+ if(collection==='jobs')db.appointments=db.appointments.filter(a=>!linkedApptIds.has(a.id));
+ if(collection==='appointments'||collection==='quotes'){
+  db.jobs=db.jobs.filter(j=>!linkedJobIds.has(j.id));
+  db.appointments=db.appointments.filter(a=>!linkedApptIds.has(a.id));
+ }
+ if(await save())go(page);else{db.jobs=before.jobs;db.appointments=before.appointments;db.quotes=before.quotes;alert('Non è stato possibile eliminare i dati. Nulla è stato modificato.');}
+}function addPart(p={}){let d=document.createElement('div');d.className='part';d.innerHTML=`<div class="field"><label>Materiale / ricambio</label><input class="pn" list="knownParts" value="${e(p.name||'')}"></div><div class="two"><div class="field"><label>Quantità</label><input class="pq" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.qty??'')}"></div><div class="field"><label>Prezzo unitario (CHF)</label><input class="pp" type="number" inputmode="decimal" min="0" step="0.01" value="${e(p.price??'')}"></div></div><div class="row"><strong class="subtotal">0,00 CHF</strong><button type="button" class="secondary danger">Rimuovi</button></div>`;d.querySelectorAll('input').forEach(i=>i.oninput=calc);d.querySelector('button').onclick=()=>{d.remove();calc()};$('parts').appendChild(d);calc()}function quickPart(name){
  let price=0;
  for(const job of [...db.jobs].reverse()){
   const previous=(job.parts||[]).find(p=>(p.name||'').trim().toLowerCase()===name.toLowerCase());
@@ -955,11 +978,13 @@ async function deleteQuote(){
  const quoteId=v('q_id'),existing=(db.quotes||[]).find(q=>q.id===quoteId);
  if(!existing)return alert('Questo preventivo non è ancora salvato. Usa «Indietro» per uscire.');
  if(!confirm('Eliminare definitivamente il preventivo di '+existing.client+'? Questa azione non elimina eventuali schede lavoro già create.'))return;
- const before=[...db.quotes];
+ const beforeQuotes=[...db.quotes],beforeAppointments=[...db.appointments];
+ const linkedJob=db.jobs.some(j=>j.sourceQuoteId===quoteId||j.id===existing.linkedJobId);
  db.quotes=db.quotes.filter(q=>q.id!==quoteId);
+ if(!linkedJob)db.appointments=db.appointments.filter(a=>a.sourceQuoteId!==quoteId&&a.id!==existing.linkedAppointmentId);
  if(await save()){
-  closeQuote();renderQuotes();alert('Preventivo eliminato.');
- }else db.quotes=before;
+  closeQuote();renderQuotes();renderAppts();alert('Preventivo eliminato.');
+ }else{db.quotes=beforeQuotes;db.appointments=beforeAppointments;}
 }
 let pendingQuoteBookingId='';
 function updateQuoteBookingDay(){
